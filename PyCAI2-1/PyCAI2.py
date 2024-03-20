@@ -9,18 +9,16 @@ from pydub import AudioSegment
 from io import BytesIO
 from easygoogletranslate import EasyGoogleTranslate as esgt
 
-# ______         ______ _______ _______ ______ 
+# ______         ______ _______ _______ ______
 # |   __ \ __ __ |      |   _   |_     _|__    |
 # |    __/|  |  ||   ---|       |_|   |_|    __|
 # |___|   |___  ||______|___|___|_______|______|
-#         |_____|                                 
-
-                                                           
+#         |_____|
 # BUILD BY @Falco_TK    (https://github.com/FalcoTK)
 # CODE  BY @kramcat     (https://github.com/kramcat)
 # CODE  BY @background  (https://github.com/backaround)
 
-# PLEASE IF YOU HAVE SOMTING WRONG DM ME IN DISCORD ASAP! (discord: tokaifalco_)                                                  
+# PLEASE IF YOU HAVE SOMTING WRONG DM ME IN DISCORD ASAP! (discord: tokaifalco_)
 # ==================================================
 
 __all__ = ['PyCAI2', 'PyAsyncCAI2']
@@ -58,7 +56,7 @@ class PyAsyncCAI2:
 
         setattr(self.session, 'url', f'https://{sub}.character.ai/')
         setattr(self.session, 'token', token)
-        
+
         self.chat = self.chat(token, self.session)
         self.chat2 = self.chat2(token, None, self.session)
 
@@ -136,14 +134,14 @@ class PyAsyncCAI2:
                     'wss://neo.character.ai/ws/',
                      extra_headers = {
                         'Cookie': f'HTTP_AUTHORIZATION="Token {key}"',
-                    }  
+                    }
                 )
             except websockets.exceptions.InvalidStatusCode:
                 raise AuthError('Invalid token')
-            
+
             yield PyAsyncCAI2.chat2(key, self.ws, self.session)
         finally:
-            await self.ws.close()  
+            await self.ws.close()
 
     class chat:
         def __init__(
@@ -153,7 +151,7 @@ class PyAsyncCAI2:
             self.session = session
 
         async def voice(
-            self, char: str, room_id: str, 
+            self, char: str, room_id: str,
             text: str, voice_pth:str, *, token: str = None,
             **kwargs
         ):
@@ -219,7 +217,7 @@ class PyAsyncCAI2:
             merged_audio.export("voice.mp3", format="mp3")
             voice_path = os.path.abspath('voice.mp3')
             shutil.move(voice_path, os.path.join(voice_pth, os.path.basename(voice_path)))
-            
+
             return text 
 
         async def next_message(
@@ -258,7 +256,7 @@ class PyAsyncCAI2:
                 tgt = participants[0]['user']['username']
             else:
                 tgt = participants[1]['user']['username']
-            
+
             r = await PyAsyncCAI2.request(
                 'chat/streaming/', self.session,
                 token=token, method='POST', split=True,
@@ -352,7 +350,7 @@ class PyAsyncCAI2:
                 response = json.loads(await self.ws.recv())
                 try: response['turn']
                 except: raise ServerError(response['comment'])
-                
+
                 if not response['turn']['author']['author_id'].isdigit():
                     try: is_final = response['turn']['candidates'][0]['is_final']
                     except: pass
@@ -365,9 +363,7 @@ class PyAsyncCAI2:
             json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
             chat_id = json_out['chats'][0]['chat_id']
             creator_id = json_out['chats'][0]['creator_id']
-              
-            
-            
+
             if turn_id != None and candidate_id != None:
                 message['update_primary_candidate'] = {
                     'candidate_id': candidate_id,
@@ -393,12 +389,12 @@ class PyAsyncCAI2:
             }
 
             await self.ws.send(json.dumps(message))
-            
+
             while True:
                 response = json.loads(await self.ws.recv())
                 try: response['turn']
                 except: raise ServerError(response['comment'])
-                
+
                 if not response['turn']['author']['author_id'].isdigit():
                     try: is_final = response['turn']['candidates'][0]['is_final']
                     except: pass
@@ -411,21 +407,18 @@ class PyAsyncCAI2:
                         if Return_img:
                             r = response['turn']['candidates'][0]['tti_image_rel_path']
                             return r
-                        
-
-
 
         async def send_message(
             self, char: str,
             text: str, author_name:str,
             *, turn_id: str = None,token:str = None,
             candidate_id: str = None, Return_name: bool = False
-        ):  
+        ):
 
             json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
             chat_id = json_out['chats'][0]['chat_id']
             creator_id = json_out['chats'][0]['creator_id']
-              
+
             message = {
                 'command': 'create_and_generate_turn',
                 'payload': {
@@ -449,14 +442,14 @@ class PyAsyncCAI2:
                         'chat_id': chat_id
                     }
                 }
-        
+
             await self.ws.send(json.dumps(message))
 
             while True:
                 response = json.loads(await self.ws.recv())
                 try: response['turn']
                 except: raise ServerError(response['comment'])
-                
+
                 if not response['turn']['author']['author_id'].isdigit():
                     try: is_final = response['turn']['candidates'][0]['is_final']
                     except: pass
@@ -469,7 +462,7 @@ class PyAsyncCAI2:
                         else:
                             r = response['turn']['candidates'][0]['raw_content']
                             return r
-        
+
 
         async def new_chat(
             self, char: str, *, with_greeting: bool = True, token:str =None
@@ -502,7 +495,6 @@ class PyAsyncCAI2:
             else:
                 answer = json.loads(await self.ws.recv())
                 return response, answer
-        
 
         async def get_histories(
             self, char: str = None, *,
@@ -521,9 +513,7 @@ class PyAsyncCAI2:
             r = await PyAsyncCAI2.request(f'turns/{chat_id}/', self.session, token=token, neo=True)
             turn_out = [{"turn_id": turn['turn_key']['turn_id'], "raw_content": turn['candidates'][0]['raw_content']} for turn in r['turns']]
             output = [f'["{turn["turn_id"]}", "{turn["raw_content"]}"]' for turn in turn_out]
-            
             return output
-                    
 
         async def delete_message(
             self, char: str, turn_ids: list,
@@ -540,13 +530,11 @@ class PyAsyncCAI2:
             }
             await self.ws.send(json.dumps(payload))
             return json.loads(await self.ws.recv())
-        
 
         async def get_avatar(self, char:str,*, token:str = None):
             json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
             avatar_url = json_out["chats"][0]["character_avatar_uri"]
             full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
             return full_link
-            
 
 
