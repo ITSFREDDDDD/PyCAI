@@ -21,6 +21,7 @@ Gets chat history
 Functions that aren't the core logic of the library but called in methods
 *** Print
 Prints JSON, jq is current implementation
+*** Request
 
 ** Pulls an image
 ** Delete message
