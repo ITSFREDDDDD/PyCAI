@@ -12,6 +12,7 @@ The PyCAI2 library is intended to fit a specific purpose. Interacting with chara
 
 With that being said, we implement coincident features that add value to interacting with character.ai in a way that cannot be encapsulated in this library alone. These kinds of programs can be found in our organization's group repository. For example, see /card manager/, which implements card management and makes calls to any arbitrary character card endpoint through an adapter.
 
+#+note: tags like c-PyAsyncCAI2 represents the class the method belongs to. In this case PyAsyncCAI2
 * Core functions
 ** Search
 Finds a list of characters
@@ -21,7 +22,7 @@ Gets chat history
 Functions that aren't the core logic of the library but called in methods
 *** Print
 Prints JSON, jq is current implementation
-*** Request
+*** Request :c-PyAsyncCAI2:
 
 ** Pulls an image
 ** Delete message
