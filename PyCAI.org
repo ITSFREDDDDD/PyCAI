@@ -1,4 +1,4 @@
-#+TODO: REFACTOR REFACTOR-CASESWITCH TODO | DONE DEPRECIATED
+#+TODO: REFACTOR REFACTOR-CASESWITCH REFACTOR-REGEX TODO | DONE DEPRECIATED
 
 Pycai is a library for char.ai. It is intended to allow power users and those who do their web browsing through the terminal to have a tidy and accessible way to use char.ai.
 
@@ -24,7 +24,7 @@ Gets chat history
 Functions that aren't the core logic of the library but called in methods
 *** Print
 Prints JSON, jq is current implementation
-*** REFACTOR-CASESWITCH Request :c-PyAsyncCAI2:
+*** REFACTOR-CASESWITCH REFACTOR-REGEX Request :c-PyAsyncCAI2:
 #+begin_src python
     async def request(
         url: str, session: Session,
