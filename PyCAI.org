@@ -1,3 +1,5 @@
+#+TODO: REFACTOR REFACTOR-CASESWITCH TODO | DONE DEPRECIATED
+
 Pycai is a library for char.ai. It is intended to allow power users and those who do their web browsing through the terminal to have a tidy and accessible way to use char.ai.
 
 Broadly speaking, the API uses web sockets to connect to car.ai like any ordinary user at its public endpoints. There is no tangible or meaningful difference between using the API and visiting char.ai with a web browser.
@@ -22,7 +24,7 @@ Gets chat history
 Functions that aren't the core logic of the library but called in methods
 *** Print
 Prints JSON, jq is current implementation
-*** Request :c-PyAsyncCAI2:
+*** REFACTOR-CASESWITCH Request :c-PyAsyncCAI2:
 #+begin_src python
     async def request(
         url: str, session: Session,
