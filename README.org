@@ -1,0 +1,26 @@
+Pycai is a library for char.ai. It is intended to allow power users and those who do their web browsing through the terminal to have a tidy and accessible way to use char.ai.
+
+Broadly speaking, the API uses web sockets to connect to car.ai like any ordinary user at its public endpoints. There is no tangible or meaningful difference between using the API and visiting char.ai with a web browser.
+
+The API uses a collection of async methods 
+
+#+begin_quote
+If you like character.ai, don't be a dick. Please pay for char.ai+ and support the developers, also please support the creators of your favorite characters. 
+#+end_quote
+
+The PyCAI2 library is intended to fit a specific purpose. Interacting with character.ai's public web end-points in an accessible way. Encapsulation and modularity of programs means that it should be focused on this goal.
+
+With that being said, there are coincident features such as the ability to import and export character definitions from characterhub into endpoints with an adapter desgin pattern tangibly adds benefits to character.ai in a way that cannot be encapsulated in this library alone. These kinds of programs can be found in our organization's group repository. For example, see /card manager/, which implements card management and makes calls to any arbitrary character card endpoint through an adapter.
+
+* Core functions
+** Search
+Finds a list of characters
+** Get_history
+Gets chat history
+
+** Abstract functions
+*** Print
+Prints JSON 
+** Pulls an image
+** Delete message
+
