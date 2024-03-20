@@ -1,4 +1,4 @@
-#+TODO: REFACTOR REFACTOR-CASESWITCH REFACTOR-REGEX TODO | DONE DEPRECIATED
+#+TODO: REFACTOR REFACTOR-ADDTOCLASS REFACTOR-IMPLEMENTABLE REFACTOR-CASESWITCH REFACTOR-REGEX TODO | DONE DEPRECIATED
 
 Pycai is a library for char.ai. It is intended to allow power users and those who do their web browsing through the terminal to have a tidy and accessible way to use char.ai.
 
@@ -18,8 +18,29 @@ With that being said, we implement coincident features that add value to interac
 * Core functions
 ** Search
 Finds a list of characters
-** Get_history
+** chat
+Currently the following sources are within the chat class. However, I think they should be refactored to go into a message class to make the code more of an interface and less of an abstract class (programming to an interface).
+*** REFACTOR-IMPLEMENTABLE next-message
+#+begin_src python :c-pyasynccai2-chat:
+        async def next_message(
+            self, history_id: str, parent_msg_uuid: str,
+            tgt: str, *, token: str = None, **kwargs
+        ):
+            response = await PyAsyncCAI2.request(
+                'chat/streaming/', self.session,
+                token=token, method='POST', split=True,
+                data={
+                    'history_external_id': history_id,
+                    'parent_msg_uuid': parent_msg_uuid,
+                    'tgt': tgt,
+                    **kwargs
+                }
+            )
+            #+end_src
+** Get_histories
 Gets chat history
+
+** get_histories 
 ** Abstract functions
 Functions that aren't the core logic of the library but called in methods
 *** Print
@@ -81,6 +102,8 @@ Prints JSON, jq is current implementation
         else:
             return data
 #+end_src
+*** REFACTOR 
+
 ** Pulls an image
 ** Delete message
 
