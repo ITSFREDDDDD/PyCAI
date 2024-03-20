@@ -17,10 +17,11 @@ With that being said, we implement coincident features that add value to interac
 Finds a list of characters
 ** Get_history
 Gets chat history
-
 ** Abstract functions
+Functions that aren't the core logic of the library but called in methods
 *** Print
-Prints JSON 
+Prints JSON, jq is current implementation
+
 ** Pulls an image
 ** Delete message
 
