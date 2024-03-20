@@ -10,7 +10,7 @@ If you like character.ai, don't be a dick. Please pay for char.ai+ and support t
 
 The PyCAI2 library is intended to fit a specific purpose. Interacting with character.ai's public web end-points in an accessible way. Encapsulation and modularity of programs means that it should be focused on this goal.
 
-With that being said, there are coincident features such as the ability to import and export character definitions from characterhub into endpoints with an adapter desgin pattern tangibly adds benefits to character.ai in a way that cannot be encapsulated in this library alone. These kinds of programs can be found in our organization's group repository. For example, see /card manager/, which implements card management and makes calls to any arbitrary character card endpoint through an adapter.
+With that being said, we implement coincident features that add value to interacting with character.ai in a way that cannot be encapsulated in this library alone. These kinds of programs can be found in our organization's group repository. For example, see /card manager/, which implements card management and makes calls to any arbitrary character card endpoint through an adapter.
 
 * Core functions
 ** Search
