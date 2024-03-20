@@ -23,7 +23,62 @@ Functions that aren't the core logic of the library but called in methods
 *** Print
 Prints JSON, jq is current implementation
 *** Request :c-PyAsyncCAI2:
+#+begin_src python
+    async def request(
+        url: str, session: Session,
+        *, token: str = None, method: str = 'GET',
+        data: dict = None, split: bool = False,
+        split2: bool = False, neo: bool = False
+    ):
 
+        if neo:
+            link = f'https://neo.character.ai/{url}'
+        else:
+            link = f'{session.url}{url}'
+
+        if token == None:
+            key = session.token
+        else:
+            key = token
+
+        headers = {
+            'Authorization': f'Token {key}',
+        }
+
+        if method == 'GET':
+            response = session.get(
+                link, headers=headers
+            )
+
+        elif method == 'POST':
+            response = session.post(
+                link, headers=headers, json=data
+            )
+
+        elif method == 'PUT':
+            response = session.put(
+                link, headers=headers, json=data
+            )
+            
+        if split:
+            data = json.loads(response.text.split('\n')[-2])
+        elif split2:
+            lines = response.text.strip().split('\n')
+            data = [json.loads(line) for line in lines if line.strip()] # List
+        else:
+            data = response.json()
+
+        if str(data).startswith("{'command': 'neo_error'"):
+            raise ServerError(data['comment'])
+        elif str(data).startswith("{'detail': 'Auth"):
+            raise AuthError('Invalid token')
+        elif str(data).startswith("{'status': 'Error"):
+            raise ServerError(data['status'])
+        elif str(data).startswith("{'error'"):
+            raise ServerError(data['error'])
+        else:
+            return data
+#+end_src
 ** Pulls an image
 ** Delete message
 
