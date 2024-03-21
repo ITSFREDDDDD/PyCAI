@@ -102,17 +102,30 @@ Delete the message in the current chat, uuids ...
 #+end_src
 
 ** Get_histories
-Gets chat history
+Gets chat histories 
 #+begin_src python
-        async def get_histories(
-            self, char: str, *, number: int = 50,
-            token: str = None
+            async def get_histories(
+            self, char: str = None, *,
+            preview: int = 2, token: str = None
         ):
             return await PyAsyncCAI2.request(
-                'chat/character/histories_v2/', self.session,
-                token=token, method='POST',
-                data={'external_id': char, 'number': number},
+                f'chats/?character_ids={char}'
+                f'&num_preview_turns={preview}',
+                self.session, token=token, neo=True
             )
+
+#+end_src
+
+** Get History
+#+begin_src python
+        async def get_history(self, char: str, *, token: str = None):
+            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
+            chat_id = json_out['chats'][0]['chat_id']
+            r = await PyAsyncCAI2.request(f'turns/{chat_id}/', self.session, token=token, neo=True)
+            turn_out = [{"turn_id": turn['turn_key']['turn_id'], "raw_content": turn['candidates'][0]['raw_content']} for turn in r['turns']]
+            output = [f'["{turn["turn_id"]}", "{turn["raw_content"]}"]' for turn in turn_out]
+            return output
+
 #+end_src
 
 ** get_histories 

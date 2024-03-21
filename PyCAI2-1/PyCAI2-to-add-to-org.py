@@ -92,7 +92,7 @@ class PyAsyncCAI2:
         finally:
             await self.ws.close()
 
-            class chat:
+    class chat:
         """Managing a chat2 with a character
 
         chat.next_message('CHAR', 'CHAT_ID', 'PARENT_ID')
@@ -259,56 +259,9 @@ class PyAsyncCAI2:
                             return r
 
 
-        async def new_chat(
-            self, char: str, *, with_greeting: bool = True, token:str =None
-        ):
-            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
-            chat_id = json_out['chats'][0]['chat_id']
-            creator_id = json_out['chats'][0]['creator_id']
-
-            message = {
-                'command': 'create_chat',
-                'payload': {
-                    'chat': {
-                        'chat_id': chat_id,
-                        'creator_id': creator_id,
-                        'visibility': 'VISIBILITY_PRIVATE',
-                        'character_id': char,
-                        'type': 'TYPE_ONE_ON_ONE'
-                    },
-                    'with_greeting': with_greeting
-                }
-            }
-            await self.ws.send(json.dumps(message))
-
-            response = json.loads(await self.ws.recv())
-            print(response)
-
-            try: response['chat']
-            except KeyError:
-                raise ServerError(response['comment'])
-            else:
-                answer = json.loads(await self.ws.recv())
-                return response, answer
-
-        async def get_histories(
-            self, char: str = None, *,
-            preview: int = 2, token: str = None
-        ):
-            return await PyAsyncCAI2.request(
-                f'chats/?character_ids={char}'
-                f'&num_preview_turns={preview}',
-                self.session, token=token, neo=True
-            )
 
 
-        async def get_history(self, char: str, *, token: str = None):
-            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
-            chat_id = json_out['chats'][0]['chat_id']
-            r = await PyAsyncCAI2.request(f'turns/{chat_id}/', self.session, token=token, neo=True)
-            turn_out = [{"turn_id": turn['turn_key']['turn_id'], "raw_content": turn['candidates'][0]['raw_content']} for turn in r['turns']]
-            output = [f'["{turn["turn_id"]}", "{turn["raw_content"]}"]' for turn in turn_out]
-            return output
+
 
         async def delete_message(
             self, char: str, turn_ids: list,
