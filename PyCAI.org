@@ -24,57 +24,6 @@ With that being said, we implement coincident features that add value to interac
 - Good: message.send
 - Bad:  chat.new
 
-* Setup
-#+begin_src python
-from contextlib import asynccontextmanager
-import websockets
-import json
-import base64
-import os
-import shutil
-from curl_cffi.requests import Session
-from pydub import AudioSegment
-from io import BytesIO
-from easygoogletranslate import EasyGoogleTranslate as esgt
-
-# ███████             ██████      ██     ██  ████
-#░██░░░░██  ██   ██  ██░░░░██    ████   ░██ █░░░ █
-#░██   ░██ ░░██ ██  ██    ░░    ██░░██  ░██░    ░█
-#░███████   ░░███  ░██         ██  ░░██ ░██   ███
-#░██░░░░     ░██   ░██        ██████████░██  █░░
-#░██         ██    ░░██    ██░██░░░░░░██░██ █
-#░██        ██      ░░██████ ░██     ░██░██░██████
-#░░        ░░        ░░░░░░  ░░      ░░ ░░ ░░░░░░
-# BUILD BY @Falco_TK    (https://github.com/FalcoTK)
-# CODE  BY @kramcat     (https://github.com/kramcat)
-# CODE  BY @background  (https://github.com/backaround)
-# CODE  BY @ITSFRED9999 (https://github.com/fred)
-# When making a pull request, please put your information here
-# =============================================================
-# Need support? Open a discord ticket at (discord: tokaifalco_)
-# =============================================================
-
-__all__ = ['PyCAI2', 'PyAsyncCAI2']
-
-#+end_src
-* REFACTOR Error handling
-#+begin_src python
-class PyCAI2EX(Exception):
-    pass
-
-class ServerError(PyCAI2EX):
-    pass
-
-class LabelError(PyCAI2EX):
-    pass
-
-class AuthError(PyCAI2EX):
-    pass
-
-class PostTypeError(PyCAI2EX):
-    pass
-
-#+end_src
 
 * Logic
 #+begin_example python
@@ -91,11 +40,56 @@ class PostTypeError(PyCAI2EX):
         message.delete('CHAT_ID', 'TURN_ID')
 
 #+end_example
-
 ** Search
 Finds a list of characters
-** REFACTOR PySyncAI
+** REFACTOR PySynCAI
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
+#+begin_src python
+class PySynCAI:
+  def __init__(
+    self, token: str = None, plus: bool = False
+  ):
+  self.token = token
+  self.plus = plus
+  if plus: sub = 'plus'
+  else: sub = 'beta'
+  
+  self.session = Session(
+  headers={
+    'User-Agent': 'okhttp/5.0.0-SNAPSHOT'
+    }
+   )
+   setattr(self.session, 'url', f'https://{sub}.character.ai/')
+   setattr(self.session, 'token', token)
+   self.chat = self.chat(token, self.session)
+   self.chat2 = self.chat2(token, None, self.session)
+   async def ping(self):
+     return self.session.get(
+       'https://neo.character.ai/ping/'
+     ).json()
+     @asynccontextmanager
+    async def connect(self, token: str = None):
+      try:
+        if token == None: key = self.token
+        else: key = token
+          setattr(self.session, 'token', key)
+          try:
+            self.ws = await websockets.connect(
+              'wss://neo.character.ai/ws/',
+              extra_headers = {
+                'Cookie': f'HTTP_AUTHORIZATION="Token {key}"',
+                }
+             )
+             except websockets.exceptions.InvalidStatusCode:
+               raise AuthError('Invalid token')
+               yield PyAsyncCAI2.chat2(key, self.ws, self.session)
+        finally:
+          await self.ws.close()
+#+end_src
+*** Constructor
+#+name:constructor.PySyncAI
+#+begin_src python
+#+end_src
 
 *** chat
 
@@ -363,6 +357,60 @@ This should probably be placed in a character class, not a message class
             full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
             return full_link
 #+end_src
+
+** Setup
+#+begin_src python
+from contextlib import asynccontextmanager
+import websockets
+import json
+import base64
+import os
+import shutil
+from curl_cffi.requests import Session
+from pydub import AudioSegment
+from io import BytesIO
+from easygoogletranslate import EasyGoogleTranslate as esgt
+
+# ███████             ██████      ██     ██  ████
+#░██░░░░██  ██   ██  ██░░░░██    ████   ░██ █░░░ █
+#░██   ░██ ░░██ ██  ██    ░░    ██░░██  ░██░    ░█
+#░███████   ░░███  ░██         ██  ░░██ ░██   ███
+#░██░░░░     ░██   ░██        ██████████░██  █░░
+#░██         ██    ░░██    ██░██░░░░░░██░██ █
+#░██        ██      ░░██████ ░██     ░██░██░██████
+#░░        ░░        ░░░░░░  ░░      ░░ ░░ ░░░░░░
+# BUILD BY @Falco_TK    (https://github.com/FalcoTK)
+# CODE  BY @kramcat     (https://github.com/kramcat)
+# CODE  BY @background  (https://github.com/backaround)
+# CODE  BY @ITSFRED9999 (https://github.com/fred)
+# When making a pull request, please put your information here
+# =============================================================
+# Need support? Open a discord ticket at (discord: tokaifalco_)
+# =============================================================
+
+__all__ = ['PyCAI2', 'PyAsyncCAI2']
+
+#+end_src
+** REFACTOR Error handling
+#+begin_src python
+class PyCAI2EX(Exception):
+    pass
+
+class ServerError(PyCAI2EX):
+    pass
+
+class LabelError(PyCAI2EX):
+    pass
+
+class AuthError(PyCAI2EX):
+    pass
+
+class PostTypeError(PyCAI2EX):
+    pass
+
+#+end_src
+
+
 
 * Abstract functions
 Functions that aren't the core logic of the library but called in methods
