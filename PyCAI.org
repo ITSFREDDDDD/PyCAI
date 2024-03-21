@@ -132,111 +132,15 @@ async def get_history(self, char: str, *, token: str = None):
 #+name:message.PySyncAI
 #+begin_src python
 class message:
-  <<init.message>> # these are indented
+  <<constructor.chat>> # same constructor as chat
   <<send.message>> # these are indented
   <<delete.message>> # these are indented
   <<next.message>> #R# default gets the next message in sequence, if defined takes number parameter 
   <<rate.message>> # Assigns message value
 #+end_src
-*** REFACTOR imagen
-imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
-#+name:imagen.PySyncAI
-#+begin_src python
-class imagen:
-  <<generate.imagen>>
-#+end_src
-***** REFACTOR Generate Image
-#+begin_src python
-async def generate(
-  self, char: str, chat_id: str, text: str,
-  author_name:str, Return_img: bool = True, Return_all: bool = False, *, turn_id: str = None, candidate_id: str = None, token:str = None
-        ):
-  json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
-  chat_id = json_out['chats'][0]['chat_id']
-  creator_id = json_out['chats'][0]['creator_id']
-
-  if turn_id != None and candidate_id != None:
-    message['update_primary_candidate'] = {
-    'candidate_id': candidate_id,
-                    'turn_key': {
-                    'turn_id': turn_id,
-                    'chat_id': chat_id
-                    }
-                }
-                
-                message = {
-                'command': 'create_and_generate_turn',
-                'payload': {
-                    'character_id': char,
-                    'turn': {
-                        'turn_key': {'chat_id': chat_id},
-                        "author": {
-                                "author_id": creator_id,
-                                "is_human": True,
-                                "name   ": author_name},
-                        'candidates': [{'raw_content': text}]
-                    }
-                }
-            }
-
-            await self.ws.send(json.dumps(message))
-
-            while True:
-                response = json.loads(await self.ws.recv())
-                try: response['turn']
-                except: raise ServerError(response['comment'])
-
-                if not response['turn']['author']['author_id'].isdigit():
-                    try: is_final = response['turn']['candidates'][0]['is_final']
-                    except: pass
-                    else:
-                        if Return_all:
-                            r_in = response['turn']['candidates'][0]['raw_content']
-                            img_in = response['turn']['candidates'][0]['tti_image_rel_path']  # Perhatikan perubahan indeks ke 0 di sini
-                            results = f"{r_in}\n{img_in}"
-                            return results
-                        if Return_img:
-                            r = response['turn']['candidates'][0]['tti_image_rel_path']
-                            return r
-
-#+end_src
-
-*** REFACTOR character
-#+begin_src python
-class character:
-<<get_histories.character>> # gets json of all character histories
-<<get_avatar.character>> # gets the character avatar image
-<<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
-#+end_src
-**** get_avatar
-This should probably be placed in a character class, not a message class
-#+begin_src python
-        async def get_avatar(self, char:str,*, token:str = None):
-            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
-            avatar_url = json_out["chats"][0]["character_avatar_uri"]
-            full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
-            return full_link
-#+end_src
-**** get_histories
-Gets chat histories 
-#+begin_src python
-            async def get_histories(
-            self, char: str = None, *,
-            preview: int = 2, token: str = None
-        ):
-            return await PyAsyncCAI2.request(
-                f'chats/?character_ids={char}'
-                f'&num_preview_turns={preview}',
-                self.session, token=token, neo=True
-            )
-
-#+end_src
-
-*** 
-*** REFACTOR Error handling
-
-*** REFACTOR send_message
+**** REFACTOR send
 the name send_message should be renamed to "create"
+#+name:send.message
 #+begin_src python
         async def send_message(
             self, char: str,
@@ -299,6 +203,108 @@ the name send_message should be renamed to "create"
                             
 
 #+end_src
+
+
+
+*** REFACTOR imagen
+imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
+#+name:imagen.PySyncAI
+#+begin_src python
+class imagen:
+  <<constructor.chat>> # same constructor as chat
+  <<generate.imagen>>
+#+end_src
+***** REFACTOR Generate Image
+#+begin_src python
+async def generate(
+  self, char: str, chat_id: str, text: str,
+  author_name:str, Return_img: bool = True, Return_all: bool = False, *, turn_id: str = None, candidate_id: str = None, token:str = None
+        ):
+  json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
+  chat_id = json_out['chats'][0]['chat_id']
+  creator_id = json_out['chats'][0]['creator_id']
+
+  if turn_id != None and candidate_id != None:
+    message['update_primary_candidate'] = {
+    'candidate_id': candidate_id,
+                    'turn_key': {
+                    'turn_id': turn_id,
+                    'chat_id': chat_id
+                    }
+                }
+                
+                message = {
+                'command': 'create_and_generate_turn',
+                'payload': {
+                    'character_id': char,
+                    'turn': {
+                        'turn_key': {'chat_id': chat_id},
+                        "author": {
+                                "author_id": creator_id,
+                                "is_human": True,
+                                "name   ": author_name},
+                        'candidates': [{'raw_content': text}]
+                    }
+                }
+            }
+
+            await self.ws.send(json.dumps(message))
+
+            while True:
+                response = json.loads(await self.ws.recv())
+                try: response['turn']
+                except: raise ServerError(response['comment'])
+
+                if not response['turn']['author']['author_id'].isdigit():
+                    try: is_final = response['turn']['candidates'][0]['is_final']
+                    except: pass
+                    else:
+                        if Return_all:
+                            r_in = response['turn']['candidates'][0]['raw_content']
+                            img_in = response['turn']['candidates'][0]['tti_image_rel_path']  # Perhatikan perubahan indeks ke 0 di sini
+                            results = f"{r_in}\n{img_in}"
+                            return results
+                        if Return_img:
+                            r = response['turn']['candidates'][0]['tti_image_rel_path']
+                            return r
+
+#+end_src
+
+*** REFACTOR character
+#+begin_src python
+class character:
+  <<constructor.chat>> # same constructor as chat
+<<get_histories.character>> # gets json of all character histories
+<<get_avatar.character>> # gets the character avatar image
+<<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
+#+end_src
+**** get_avatar
+This should probably be placed in a character class, not a message class
+#+begin_src python
+        async def get_avatar(self, char:str,*, token:str = None):
+            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
+            avatar_url = json_out["chats"][0]["character_avatar_uri"]
+            full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
+            return full_link
+#+end_src
+**** get_histories
+Gets chat histories 
+#+begin_src python
+            async def get_histories(
+            self, char: str = None, *,
+            preview: int = 2, token: str = None
+        ):
+            return await PyAsyncCAI2.request(
+                f'chats/?character_ids={char}'
+                f'&num_preview_turns={preview}',
+                self.session, token=token, neo=True
+            )
+
+#+end_src
+
+*** REFACTOR Error handling
+
+
 *** REFACTOR delete_message
 the name delete_message should be renamed to "delete"
 #+begin_src python
