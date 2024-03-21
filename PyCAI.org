@@ -105,9 +105,18 @@ The name chat should be refactored to "message".
       <<next.message>> #R# Needs 
       <<imagen.message>> #R# Needs generate.image class
       <<get_histories.message>> #R# Needs character class
-      <<get_history.message>> #R# chat class
+      <<get_history.chat>> #R# chat class
       <<get_avatar.message>> #R# Needs character class
 #+END_SRC
+
+**** image
+
+#+begin_src python
+class character:
+<<get_histories.character>>
+<<get_avatar.character>>
+<<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
+#+end_src
 
 
 **** REFACTOR init
