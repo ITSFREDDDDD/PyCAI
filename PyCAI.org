@@ -81,7 +81,7 @@ class PostTypeError(PyCAI2EX):
         chat.get_histories('CHAR')
         chat.get_chat('CHAR')
         chat.get_history('CHAT_ID')
-        chat.rate(RATE, 'CHAT_ID', 'TURN_ID', 'CANDIDATE_ID')
+        message.rate(RATE, 'CHAT_ID', 'TURN_ID', 'CANDIDATE_ID')
         chat.delete_message('CHAT_ID', 'TURN_ID')
 
 #+end_example
@@ -103,7 +103,7 @@ The name chat should be refactored to "message".
 #+BEGIN_SRC python :tangle "sample.py" :noweb yes
   class chat:
 
-      <<get_history.chat>> # Gets a specific history from histories json object
+      <<get_history.chat>> # Gets a specific history from histories json object or from the chat object
       <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter. Not yet defined
       <<create.chat>> #creates a new chat. might only be in v1
 #+END_SRC
