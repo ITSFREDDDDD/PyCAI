@@ -20,88 +20,126 @@ With that being said, we implement coincident features that add value to interac
 Finds a list of characters
 ** REFACTOR PySyncAI
 *** chat
+
+        Managing a chat2 with a character
+
+        chat.next_message('CHAR', 'CHAT_ID', 'PARENT_ID')
+        chat.send_message('CHAR', 'CHAT_ID', 'TEXT', {AUTHOR})
+        chat.next_message('CHAR', 'MESSAGE')
+        chat.new_chat('CHAR', 'CHAT_ID', 'CREATOR_ID')
+        chat.get_histories('CHAR')
+        chat.get_chat('CHAR')
+        chat.get_history('CHAT_ID')
+        chat.rate(RATE, 'CHAT_ID', 'TURN_ID', 'CANDIDATE_ID')
+        chat.delete_message('CHAT_ID', 'TURN_ID')
+
+        
+
 Currently the following sources are within the chat class. However, I think they should be refactored to go into a message class to make the code more of an interface and less of an abstract class (programming to an interface).
 
-**** Next Message
-***** REFACTOR-IMPLEMENTABLE next-message
-#+begin_src python :c-pyasynccai2-chat:
-        async def next_message(
-            self, history_id: str, parent_msg_uuid: str,
-            tgt: str, *, token: str = None, **kwargs
-        ):
-            response = await PyAsyncCAI2.request(
-                'chat/streaming/', self.session,
-                token=token, method='POST', split=True,
-                data={
-                    'history_external_id': history_id,
-                    'parent_msg_uuid': parent_msg_uuid,
-                    'tgt': tgt,
-                    **kwargs
-                }
-            )
-            #+end_src
+The name chat should be refactored to "message".
 
-**** Get Histories
-***** Get histories
-Get the histories of the character
-#+begin_src python :c-pyasynccai2-chat:
-
-#+end_src
-**** Delete Message
-Delete the message in the current chat, uuids ... 
+**** REFACTOR send_message
+the name send_message should be renamed to "create"
 #+begin_src python
+        async def send_message(
+            self, char: str,
+            text: str, author_name:str,
+            *, turn_id: str = None,token:str = None,
+            candidate_id: str = None, Return_name: bool = False
+        ):
 
-        async def delete_message(
-            self, history_id: str, uuids_to_delete: list,
-            *, token: str = None, **kwargs
-        ):
-            return await PyAsyncCAI2.request(
-                'chat/history/msgs/delete/', self.session,
-                token=token, method='POST',
-                data={
-                    'history_id': history_id,
-                    'uuids_to_delete': uuids_to_delete,
-                    **kwargs
-                }
-            )
-#+end_src
-**** New Chat
-#+begin_src python
-        async def new_chat(
-            self, char: str, *, with_greeting: bool = True, token:str =None
-        ):
             json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
             chat_id = json_out['chats'][0]['chat_id']
             creator_id = json_out['chats'][0]['creator_id']
 
             message = {
-                'command': 'create_chat',
+                'command': 'create_and_generate_turn',
                 'payload': {
-                    'chat': {
-                        'chat_id': chat_id,
-                        'creator_id': creator_id,
-                        'visibility': 'VISIBILITY_PRIVATE',
-                        'character_id': char,
-                        'type': 'TYPE_ONE_ON_ONE'
-                    },
-                    'with_greeting': with_greeting
+                    'character_id': char,
+                    'turn': {
+                        'turn_key': {'chat_id': chat_id},
+                         "author": {
+                                "author_id": creator_id,
+                                "is_human": True,
+                                "name   ": author_name},
+                        'candidates': [{'raw_content': text}]
+                    }
                 }
             }
+
+            if turn_id != None and candidate_id != None:
+                message['update_primary_candidate'] = {
+                    'candidate_id': candidate_id,
+                    'turn_key': {
+                        'turn_id': turn_id,
+                        'chat_id': chat_id
+                    }
+                }
+
             await self.ws.send(json.dumps(message))
 
-            response = json.loads(await self.ws.recv())
-            print(response)
+            while True:
+                response = json.loads(await self.ws.recv())
+                try: response['turn']
+                except: raise ServerError(response['comment'])
 
-            try: response['chat']
-            except KeyError:
-                raise ServerError(response['comment'])
-            else:
-                answer = json.loads(await self.ws.recv())
-                return response, answer
+                if not response['turn']['author']['author_id'].isdigit():
+                    try: is_final = response['turn']['candidates'][0]['is_final']
+                    except: pass
+                    else:
+                        if Return_name:
+                            r_in = response['turn']['candidates'][0]['raw_content']
+                            n_in = response['turn']['author']["name"]
+                            r = f"({n_in}) {r_in}"
+                            return r
+                        else:
+                            r = response['turn']['candidates'][0]['raw_content']
+                            return r
+
+
+
+
+                            
+
+#+end_src
+**** REFACTOR delete_message
+the name delete_message should be renamed to "delete"
+#+begin_src python
 
 #+end_src
 
-** Get_histories
+**** next_message
+***** REFACTOR-IMPLEMENTABLE next-message
+#+begin_src python :c-pyasynccai2-chat:
+        async def next_message(
+            self, char: str, parent_msg_uuid: str,token:str = None
+        ):
+            setup = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
+            chat_id = setup['chats'][0]['chat_id']
+            await self.ws.send(json.dumps({
+                'command': 'generate_turn_candidate',
+                'payload': {
+                    'character_id': char,
+                    'turn_key': {
+                        'turn_id': parent_msg_uuid,
+                        'chat_id': chat_id
+                    }
+                }
+            }))
+
+            while True:
+                response = json.loads(await self.ws.recv())
+                try: response['turn']
+                except: raise ServerError(response['comment'])
+
+                if not response['turn']['author']['author_id'].isdigit():
+                    try: is_final = response['turn']['candidates'][0]['is_final']
+                    except: pass
+                    else: return response
+            #+end_src
+
+**** get_histories
 Gets chat histories 
 #+begin_src python
             async def get_histories(
@@ -116,7 +154,7 @@ Gets chat histories
 
 #+end_src
 
-** Get History
+**** get_history
 #+begin_src python
         async def get_history(self, char: str, *, token: str = None):
             json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
@@ -128,12 +166,13 @@ Gets chat histories
 
 #+end_src
 
-** get_histories 
-** Abstract functions
+
+
+* Abstract functions
 Functions that aren't the core logic of the library but called in methods
-*** Print
+** Print
 Prints JSON, jq is current implementation
-*** REFACTOR-CASESWITCH REFACTOR-REGEX Request :c-PyAsyncCAI2:
+** REFACTOR-CASESWITCH REFACTOR-REGEX Request :c-PyAsyncCAI2:
 #+begin_src python
     async def request(
         url: str, session: Session,
@@ -190,8 +229,9 @@ Prints JSON, jq is current implementation
         else:
             return data
 #+end_src
-*** REFACTOR 
+** REFACTOR 
 
 ** Pulls an image
 ** Delete message
+
 
