@@ -71,7 +71,7 @@ from easygoogletranslate import EasyGoogleTranslate as esgt
 # Need support? Open a discord ticket at (discord: tokaifalco_)
 # =============================================================
 
-__all__ = ['PyCAI2', 'PyAsyncCAI2']
+__all__ = ['PyCAI', 'PySyncCAI']
 
 #+end_src
 
