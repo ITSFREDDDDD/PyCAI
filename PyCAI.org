@@ -110,7 +110,19 @@ the name delete_message should be renamed to "delete"
 #+begin_src python
 
 #+end_src
+**** Translate
+This function should be moved into a different repository such as chat_manager, since it isn't necessary for CAI.
+#+begin_src python
+        async def transl(text:str, target:str, source:str):
+            translator = esgt(
+            source_language=source,
+            target_language=target)
 
+            resoult = translator.translate(text)
+
+            return result
+
+#+end_src
 **** next_message
 ***** REFACTOR-IMPLEMENTABLE next-message
 #+begin_src python :c-pyasynccai2-chat:
