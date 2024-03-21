@@ -150,7 +150,7 @@ class PySynCAI:
 
 #+note: these noweb blocks should just be tangled based on section headline level
 #+name: chat.PySynCAI
-#+BEGIN_SRC python :tangle yes :noweb yes
+#+BEGIN_SRC python :tangle no :noweb yes
 class chat:
   # was there a constructor here?
   <<get_history.chat>> # Gets a specific history from histories json object or from the chat object
@@ -185,7 +185,7 @@ async def get_history(self, char: str, *, token: str = None):
 #+end_src
 *** REFACTOR message
 #+name:message.PySyncAI
-#+begin_src python :tangle yes :noweb yes
+#+begin_src python :tangle no :noweb yes
 class message:
   <<constructor.chat>> # same constructor as chat
   <<send.message>> # these are indented
@@ -316,7 +316,7 @@ This function should be moved into a different repository such as chat_manager, 
 *** REFACTOR imagen
 imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
 #+name:imagen.PySyncAI
-#+begin_src python :tangle yes :noweb yes
+#+begin_src python :tangle no :noweb yes
 class imagen:
   <<constructor.chat>> # same constructor as chat
   <<generate.imagen>>
@@ -378,12 +378,12 @@ async def generate(
 #+end_src
 
 *** REFACTOR character
-#+begin_src python :tangle yes :noweb yes
+#+begin_src python :tangle no :noweb yes
 class character:
   <<constructor.chat>> # same constructor as chat
-<<get_histories.character>> # gets json of all character histories
-<<get_avatar.character>> # gets the character avatar image
-<<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
+  <<get_histories.character>> # gets json of all character histories
+  <<get_avatar.character>> # gets the character avatar image
+  <<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
 #+end_src
 **** get_avatar
 This should probably be placed in a character class, not a message class
