@@ -41,37 +41,37 @@ With that being said, we implement coincident features that add value to interac
 #+end_example
 ** REFACTOR PySynCAI
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
+
 #+begin_src python
 class PySynCAI:
   def __init__(
     self, token: str = None, plus: bool = False
   ):
-  self.token = token
-  self.plus = plus
-  if plus: sub = 'plus'
-  else: sub = 'beta'
-  
-  self.session = Session(
-  headers={
-    'User-Agent': 'okhttp/5.0.0-SNAPSHOT'
-    }
-   )
-   setattr(self.session, 'url', f'https://{sub}.character.ai/')
-   setattr(self.session, 'token', token)
-   self.chat = self.chat(token, self.session)
-   self.chat2 = self.chat2(token, None, self.session)
-   async def ping(self):
-     return self.session.get(
+    self.token = token
+    self.plus = plus
+    if plus: sub = 'plus'
+    else: sub = 'beta'
+    self.session = Session(
+      headers={
+      'User-Agent': 'okhttp/5.0.0-SNAPSHOT'
+      }
+     )
+     setattr(self.session, 'url', f'https://{sub}.character.ai/')
+     setattr(self.session, 'token', token)
+     self.chat = self.chat(token, self.session)
+     self.chat2 = self.chat2(token, None, self.session)
+     async def ping(self):
+        return self.session.get(
        'https://neo.character.ai/ping/'
      ).json()
      @asynccontextmanager
-    async def connect(self, token: str = None):
-      try:
-        if token == None: key = self.token
-        else: key = token
-          setattr(self.session, 'token', key)
-          try:
-            self.ws = await websockets.connect(
+     async def connect(self, token: str = None):
+       try:
+         if token == None: key = self.token
+         else: key = token
+           setattr(self.session, 'token', key)
+           try:
+             self.ws = await websockets.connect(
               'wss://neo.character.ai/ws/',
               extra_headers = {
                 'Cookie': f'HTTP_AUTHORIZATION="Token {key}"',
@@ -81,9 +81,9 @@ class PySynCAI:
                raise AuthError('Invalid token')
                yield PyAsyncCAI2.chat2(key, self.ws, self.session)
         finally:
-          await self.ws.close()
+          5await self.ws.close()
 <<chat.PySyncAI>>
-
+<<chat.
 #+end_src
 *** chat
 
