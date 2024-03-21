@@ -25,7 +25,7 @@ With that being said, we implement coincident features that add value to interac
 - Bad:  chat.new
 
 * Logic
-#+begin_example python
+#+begin_example python :tangle yes :noweb yes
 # This is a integration test
 #       Managing a chat with a character
         message.next('CHAR', 'CHAT_ID', 'PARENT_ID')
@@ -42,7 +42,7 @@ With that being said, we implement coincident features that add value to interac
 
 #+note: PySyncAI seems unnecessary... should have all classes pushed back and remove that name, just put it here
 ** REFACTOR Setup
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 from contextlib import asynccontextmanager
 import websockets
 import json
@@ -76,7 +76,7 @@ __all__ = ['PyCAI2', 'PyAsyncCAI2']
 #+end_src
 
 ** REFACTOR Error handling
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 class PyCAI2EX(Exception):
     pass
 
@@ -96,7 +96,7 @@ class PostTypeError(PyCAI2EX):
 
 ** REFACTOR Master Class
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 class PySynCAI:
   <<constructor.PySynCAI>>
   <<chat.PySyncAI>>
@@ -106,7 +106,7 @@ class PySynCAI:
 #+end_src
 *** REFACTOR constructor
 #+name:constructor.PySynCAI
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
   def __init__(
     self, token: str = None, plus: bool = False
   ):
@@ -150,7 +150,7 @@ class PySynCAI:
 
 #+note: these noweb blocks should just be tangled based on section headline level
 #+name: chat.PySynCAI
-#+BEGIN_SRC python :tangle "sample.py" :noweb yes
+#+BEGIN_SRC python :tangle yes :noweb yes
 class chat:
   # was there a constructor here?
   <<get_history.chat>> # Gets a specific history from histories json object or from the chat object
@@ -160,7 +160,7 @@ class chat:
 #+END_SRC
 **** get_history
 #+name:get_history.chat
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 async def get_history(self, char: str, *, token: str = None):
   json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
   chat_id = json_out['chats'][0]['chat_id']
@@ -171,7 +171,7 @@ async def get_history(self, char: str, *, token: str = None):
 
 #+end_src
 *** REFACTOR constructor
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 
 # I'm pretty sure this was the chat constructor but should double check. This constructor likely needs to be present in the new classes I created.
         def __init__(
@@ -185,7 +185,7 @@ async def get_history(self, char: str, *, token: str = None):
 #+end_src
 *** REFACTOR message
 #+name:message.PySyncAI
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 class message:
   <<constructor.chat>> # same constructor as chat
   <<send.message>> # these are indented
@@ -197,7 +197,7 @@ class message:
 **** REFACTOR send
 the name send_message should be renamed to "create"
 #+name:send.message
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
         async def send_message(
             self, char: str,
             text: str, author_name:str,
@@ -264,13 +264,13 @@ the name send_message should be renamed to "create"
 **** REFACTOR delete
 the name delete_message should be renamed to "delete"
 name: delete.message
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 # where did the code go?
 #+end_src
 **** [#B] translate
 This function should be moved into a different repository such as chat_manager, since it isn't necessary for CAI.
 #+name: translate.mesage
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
         async def transl(text:str, target:str, source:str):
             translator = esgt(
             source_language=source,
@@ -283,7 +283,7 @@ This function should be moved into a different repository such as chat_manager, 
 #+end_src
 **** next
 #+name: next.message
-#+begin_src python :c-pyasynccai2-chat:
+#+begin_src python :tangle yes :noweb yes :c-pyasynccai2-chat:
         async def next_message(
             self, char: str, parent_msg_uuid: str,token:str = None
         ):
@@ -316,13 +316,13 @@ This function should be moved into a different repository such as chat_manager, 
 *** REFACTOR imagen
 imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
 #+name:imagen.PySyncAI
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 class imagen:
   <<constructor.chat>> # same constructor as chat
   <<generate.imagen>>
 #+end_src
 ***** REFACTOR Generate Image
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 async def generate(
   self, char: str, chat_id: str, text: str,
   author_name:str, Return_img: bool = True, Return_all: bool = False, *, turn_id: str = None, candidate_id: str = None, token:str = None
@@ -378,7 +378,7 @@ async def generate(
 #+end_src
 
 *** REFACTOR character
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
 class character:
   <<constructor.chat>> # same constructor as chat
 <<get_histories.character>> # gets json of all character histories
@@ -387,7 +387,7 @@ class character:
 #+end_src
 **** get_avatar
 This should probably be placed in a character class, not a message class
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
         async def get_avatar(self, char:str,*, token:str = None):
             json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
             avatar_url = json_out["chats"][0]["character_avatar_uri"]
@@ -396,7 +396,7 @@ This should probably be placed in a character class, not a message class
 #+end_src
 **** get_histories
 Gets chat histories 
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
             async def get_histories(
             self, char: str = None, *,
             preview: int = 2, token: str = None
@@ -422,7 +422,7 @@ Prints JSON, jq is current implementation
 *** REFACTOR-CASESWITCH REFACTOR-REGEX Request
 handles request
 :c-PyAsyncCAI2:
-#+begin_src python
+#+begin_src python :tangle yes :noweb yes
     async def request(
         url: str, session: Session,
         *, token: str = None, method: str = 'GET',
