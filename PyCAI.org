@@ -133,7 +133,6 @@ imagen is called imagen ("imagine - image generate") to keep stuff as interfaces
 class imagen:
   <<generate.imagen>>
 #+end_src
-
 ***** REFACTOR Generate Image
 #+begin_src python
 async def generate(
@@ -190,17 +189,38 @@ async def generate(
 
 #+end_src
 
-
-**** REFACTOR character
+*** REFACTOR character
 #+begin_src python
 class character:
 <<get_histories.character>> # gets json of all character histories
 <<get_avatar.character>> # gets the character avatar image
 <<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
 #+end_src
+*** get_avatar
+This should probably be placed in a character class, not a message class
+#+begin_src python
+        async def get_avatar(self, char:str,*, token:str = None):
+            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
+            avatar_url = json_out["chats"][0]["character_avatar_uri"]
+            full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
+            return full_link
+#+end_src
+*** get_histories
+Gets chat histories 
+#+begin_src python
+            async def get_histories(
+            self, char: str = None, *,
+            preview: int = 2, token: str = None
+        ):
+            return await PyAsyncCAI2.request(
+                f'chats/?character_ids={char}'
+                f'&num_preview_turns={preview}',
+                self.session, token=token, neo=True
+            )
 
+#+end_src
 
-**** REFACTOR init
+*** REFACTOR init
 #+begin_src python
         def __init__(
             self, token: str,
@@ -212,14 +232,9 @@ class character:
             self.ws = ws
 #+end_src
 
+*** REFACTOR Error handling
 
-**** REFACTOR Error handling
-
-**** REFACTOR create_image
-#+begin_src python
-
-#+end_src
-**** REFACTOR send_message
+*** REFACTOR send_message
 the name send_message should be renamed to "create"
 #+begin_src python
         async def send_message(
@@ -283,12 +298,12 @@ the name send_message should be renamed to "create"
                             
 
 #+end_src
-**** REFACTOR delete_message
+*** REFACTOR delete_message
 the name delete_message should be renamed to "delete"
 #+begin_src python
 
 #+end_src
-**** Translate
+*** Translate
 This function should be moved into a different repository such as chat_manager, since it isn't necessary for CAI.
 #+begin_src python
         async def transl(text:str, target:str, source:str):
@@ -301,8 +316,8 @@ This function should be moved into a different repository such as chat_manager, 
             return result
 
 #+end_src
-**** next_message
-***** REFACTOR-IMPLEMENTABLE next-message
+*** next_message
+**** REFACTOR-IMPLEMENTABLE next-message
 #+begin_src python :c-pyasynccai2-chat:
         async def next_message(
             self, char: str, parent_msg_uuid: str,token:str = None
@@ -331,31 +346,8 @@ This function should be moved into a different repository such as chat_manager, 
                     else: return response
             #+end_src
 
-**** get_histories
-Gets chat histories 
-#+begin_src python
-            async def get_histories(
-            self, char: str = None, *,
-            preview: int = 2, token: str = None
-        ):
-            return await PyAsyncCAI2.request(
-                f'chats/?character_ids={char}'
-                f'&num_preview_turns={preview}',
-                self.session, token=token, neo=True
-            )
-
-#+end_src
 
 
-**** get_avatar
-This should probably be placed in a character class, not a message class
-#+begin_src python
-        async def get_avatar(self, char:str,*, token:str = None):
-            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
-            avatar_url = json_out["chats"][0]["character_avatar_uri"]
-            full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
-            return full_link
-#+end_src
 ** Search
 Finds a list of characters
 ** Setup
