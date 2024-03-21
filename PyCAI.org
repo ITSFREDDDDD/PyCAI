@@ -39,6 +39,59 @@ With that being said, we implement coincident features that add value to interac
         message.delete('CHAT_ID', 'TURN_ID')
 
 #+end_example
+** REFACTOR Setup
+#+begin_src python
+from contextlib import asynccontextmanager
+import websockets
+import json
+import base64
+import os
+import shutil
+from curl_cffi.requests import Session
+from pydub import AudioSegment
+from io import BytesIO
+from easygoogletranslate import EasyGoogleTranslate as esgt
+
+# ███████             ██████      ██     ██  ████
+#░██░░░░██  ██   ██  ██░░░░██    ████   ░██ █░░░ █
+#░██   ░██ ░░██ ██  ██    ░░    ██░░██  ░██░    ░█
+#░███████   ░░███  ░██         ██  ░░██ ░██   ███
+#░██░░░░     ░██   ░██        ██████████░██  █░░
+#░██         ██    ░░██    ██░██░░░░░░██░██ █
+#░██        ██      ░░██████ ░██     ░██░██░██████
+#░░        ░░        ░░░░░░  ░░      ░░ ░░ ░░░░░░
+# BUILD BY @Falco_TK    (https://github.com/FalcoTK)
+# CODE  BY @kramcat     (https://github.com/kramcat)
+# CODE  BY @background  (https://github.com/backaround)
+# CODE  BY @ITSFRED9999 (https://github.com/fred)
+# When making a pull request, please put your information here
+# =============================================================
+# Need support? Open a discord ticket at (discord: tokaifalco_)
+# =============================================================
+
+__all__ = ['PyCAI2', 'PyAsyncCAI2']
+
+#+end_src
+
+** REFACTOR Error handling
+#+begin_src python
+class PyCAI2EX(Exception):
+    pass
+
+class ServerError(PyCAI2EX):
+    pass
+
+class LabelError(PyCAI2EX):
+    pass
+
+class AuthError(PyCAI2EX):
+    pass
+
+class PostTypeError(PyCAI2EX):
+    pass
+
+#+end_src
+
 ** REFACTOR PySynCAI
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
 #+begin_src python
@@ -356,61 +409,9 @@ Gets chat histories
 
 *** REFACTOR Error handling
 
+#+note: stuff like search should be in a different repo ** Search
 
-
-** Search
-Finds a list of characters
-** Setup
-#+begin_src python
-from contextlib import asynccontextmanager
-import websockets
-import json
-import base64
-import os
-import shutil
-from curl_cffi.requests import Session
-from pydub import AudioSegment
-from io import BytesIO
-from easygoogletranslate import EasyGoogleTranslate as esgt
-
-# ███████             ██████      ██     ██  ████
-#░██░░░░██  ██   ██  ██░░░░██    ████   ░██ █░░░ █
-#░██   ░██ ░░██ ██  ██    ░░    ██░░██  ░██░    ░█
-#░███████   ░░███  ░██         ██  ░░██ ░██   ███
-#░██░░░░     ░██   ░██        ██████████░██  █░░
-#░██         ██    ░░██    ██░██░░░░░░██░██ █
-#░██        ██      ░░██████ ░██     ░██░██░██████
-#░░        ░░        ░░░░░░  ░░      ░░ ░░ ░░░░░░
-# BUILD BY @Falco_TK    (https://github.com/FalcoTK)
-# CODE  BY @kramcat     (https://github.com/kramcat)
-# CODE  BY @background  (https://github.com/backaround)
-# CODE  BY @ITSFRED9999 (https://github.com/fred)
-# When making a pull request, please put your information here
-# =============================================================
-# Need support? Open a discord ticket at (discord: tokaifalco_)
-# =============================================================
-
-__all__ = ['PyCAI2', 'PyAsyncCAI2']
-
-#+end_src
-** REFACTOR Error handling
-#+begin_src python
-class PyCAI2EX(Exception):
-    pass
-
-class ServerError(PyCAI2EX):
-    pass
-
-class LabelError(PyCAI2EX):
-    pass
-
-class AuthError(PyCAI2EX):
-    pass
-
-class PostTypeError(PyCAI2EX):
-    pass
-
-#+end_src
+#+note:
 
 
 * Abstract functions
