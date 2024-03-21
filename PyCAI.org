@@ -99,18 +99,19 @@ The name chat should be refactored to "message".
 #+note: these noweb blocks should just be tangled based on section headline level
 #+BEGIN_SRC python :tangle "sample.py" :noweb yes
   class chat:
- character class
-      <<get_history.chat>> #R# chat class
-      <<get_avatar.message>> #R# Needs character class
+
+      <<get_history.chat>> # Gets a specific history from histories json object
+      <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter 
 #+END_SRC
 
 *** REFACTOR message
 #+begin_src python
-      <<init.message>> # these are indented
-      <<send.message>> # these are indented
-      <<delete.message>> # these are indented
-      <<next.message>> #R# Needs 
-      <<get_histories.message>> #R# Needs
+  class message:
+     <<init.message>> # these are indented
+     <<send.message>> # these are indented
+     <<delete.message>> # these are indented
+     <<next.message>> #R# default gets the next message in sequence, if defined takes number parameter 
+
 #+end_src
 *** REFACTOR
 
@@ -181,8 +182,8 @@ imagen is called imagen ("imagine - image generate") to keep stuff as interfaces
 **** REFACTOR character
 #+begin_src python
 class character:
-<<get_histories.character>>
-<<get_avatar.character>>
+<<get_histories.character>> # gets json of all character histories
+<<get_avatar.character>> # gets the character avatar image
 <<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
 #+end_src
 
