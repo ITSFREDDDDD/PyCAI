@@ -115,7 +115,19 @@ async def get_history(self, char: str, *, token: str = None):
   return output
 
 #+end_src
+*** REFACTOR constructor
+#+begin_src python
 
+# I'm pretty sure this was the chat constructor but should double check. This constructor likely needs to be present in the new classes I created.
+        def __init__(
+            self, token: str,
+            ws: websockets.WebSocketClientProtocol,
+            session: Session
+        ):
+            self.token = token
+            self.session = session
+            self.ws = ws
+#+end_src
 *** REFACTOR message
 #+name:message.PySyncAI
 #+begin_src python
@@ -196,7 +208,7 @@ class character:
 <<get_avatar.character>> # gets the character avatar image
 <<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
 #+end_src
-*** get_avatar
+**** get_avatar
 This should probably be placed in a character class, not a message class
 #+begin_src python
         async def get_avatar(self, char:str,*, token:str = None):
@@ -205,7 +217,7 @@ This should probably be placed in a character class, not a message class
             full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
             return full_link
 #+end_src
-*** get_histories
+**** get_histories
 Gets chat histories 
 #+begin_src python
             async def get_histories(
@@ -220,18 +232,7 @@ Gets chat histories
 
 #+end_src
 
-*** REFACTOR init
-#+begin_src python
-        def __init__(
-            self, token: str,
-            ws: websockets.WebSocketClientProtocol,
-            session: Session
-        ):
-            self.token = token
-            self.session = session
-            self.ws = ws
-#+end_src
-
+*** 
 *** REFACTOR Error handling
 
 *** REFACTOR send_message
