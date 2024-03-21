@@ -71,24 +71,27 @@ class PostTypeError(PyCAI2EX):
 #+end_src
 
 * Core functions
+#+begin_example python
+# This is a integration test
+        Managing a chat2 with a character
+        message.next('CHAR', 'CHAT_ID', 'PARENT_ID')
+        message.send('CHAR', 'CHAT_ID', 'TEXT', {AUTHOR})
+        message.next('CHAR', 'MESSAGE')
+#        chat.new_chat('CHAR', 'CHAT_ID', 'CREATOR_ID') may have made a mistake here, it looks like there's a new chat function separate from new message
+        chat.get_histories('CHAR')
+        chat.get_chat('CHAR')
+        chat.get_history('CHAT_ID')
+        chat.rate(RATE, 'CHAT_ID', 'TURN_ID', 'CANDIDATE_ID')
+        chat.delete_message('CHAT_ID', 'TURN_ID')
+
+#+end_example
+
 ** Search
 Finds a list of characters
 ** REFACTOR PySyncAI
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
 
 *** chat
-
-        Managing a chat2 with a character
-
-        chat.next_message('CHAR', 'CHAT_ID', 'PARENT_ID')
-        chat.send_message('CHAR', 'CHAT_ID', 'TEXT', {AUTHOR})
-        chat.next_message('CHAR', 'MESSAGE')
-        chat.new_chat('CHAR', 'CHAT_ID', 'CREATOR_ID')
-        chat.get_histories('CHAR')
-        chat.get_chat('CHAR')
-        chat.get_history('CHAT_ID')
-        chat.rate(RATE, 'CHAT_ID', 'TURN_ID', 'CANDIDATE_ID')
-        chat.delete_message('CHAT_ID', 'TURN_ID')
 
         
 
@@ -101,7 +104,8 @@ The name chat should be refactored to "message".
   class chat:
 
       <<get_history.chat>> # Gets a specific history from histories json object
-      <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter 
+      <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter. Not yet defined
+      <<create.chat>> #creates a new chat
 #+END_SRC
 
 *** REFACTOR message
