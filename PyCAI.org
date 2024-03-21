@@ -78,8 +78,8 @@ class PostTypeError(PyCAI2EX):
         message.send('CHAR', 'CHAT_ID', 'TEXT', {AUTHOR})
         message.next('CHAR', 'MESSAGE')
         chat.new('CHAR', 'CHAT_ID', 'CREATOR_ID') #may have made a mistake here, it looks like there's a new chat function separate from new message, and I'm not sure if I handled that correctly
-        chat.get_histories('CHAR')
-        chat.get_chat('CHAR')
+        character.get_histories('CHAR') #returns chat IDs?
+        chat.get('CHAR')
         chat.get_history('CHAT_ID')
         message.rate(RATE, 'CHAT_ID', 'TURN_ID', 'CANDIDATE_ID')
         message.delete('CHAT_ID', 'TURN_ID')
@@ -106,6 +106,7 @@ The name chat should be refactored to "message".
       <<get_history.chat>> # Gets a specific history from histories json object or from the chat object
       <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter. Not yet defined
       <<create.chat>> #creates a new chat. might only be in v1
+      <<get.chat>> # pulls the chat
 #+END_SRC
 
 *** REFACTOR message
