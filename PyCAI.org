@@ -15,7 +15,7 @@ If you like character.ai, don't be a dick. Please pay for char.ai+ and support t
 
 The PyCAI2 library is intended to fit a specific purpose. Interacting with character.ai's public web end-points in an accessible way. Encapsulation and modularity of programs means that it should be focused on this goal.
 
-With that being said, we implement coincident features that add value to interacting with character.ai in a way that cannot be encapsulated in this library alone. These kinds of programs can be found in our organization's group repository. For example, see /card manager/, which implements card management and makes calls to any arbitrary character card endpoint through an adapter.
+With that being said, we implement coincident features that add value to interacting with character.ai in a way that cannot be encapsulated in this library alone. These kinds of programs can be found in our organization's group repository. For example, see /card manager/, which implements card management and makes calls to any arbitrary character card endpoint through an adapter. Additionally, _the namespaces used in this code are consistent with the namespaces used in our additional projects (so you can expect the image class to be present and have similar methods such as generate and delete as it has here)_
 
 #+note: tags like c-PyAsyncCAI2 represents the class the method belongs to. In this case PyAsyncCAI2
 * Setup
@@ -95,6 +95,20 @@ PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be 
 Currently the following sources are within the chat class. However, I think they should be refactored to go into a message class to make the code more of an interface and less of an abstract class (programming to an interface).
 
 The name chat should be refactored to "message".
+
+#+note: these noweb blocks should just be tangled based on section headline level
+#+BEGIN_SRC python :tangle "sample.py" :noweb yes
+  class chat:
+      <<init.message>> # these are indented
+      <<send.message>> # these are indented
+      <<delete.message>> # these are indented
+      <<next.message>> #R# Needs 
+      <<imagen.message>> #R# Needs generate.image class
+      <<get_histories.message>> #R# Needs character class
+      <<get_history.message>> #R# chat class
+      <<get_avatar.message>> #R# Needs character class
+#+END_SRC
+
 
 **** REFACTOR init
 #+begin_src python
