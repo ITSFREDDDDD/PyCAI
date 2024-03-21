@@ -103,50 +103,23 @@ The name chat should be refactored to "message".
       <<send.message>> # these are indented
       <<delete.message>> # these are indented
       <<next.message>> #R# Needs 
-      <<create_image.message>> #R# Needs generate.image class
       <<get_histories.message>> #R# Needs character class
       <<get_history.chat>> #R# chat class
       <<get_avatar.message>> #R# Needs character class
 #+END_SRC
 
-**** image
+*** REFACTOR
+
+**** imagen
+imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
 #+begin_src python
-class image:
-<<generate.image>>
+  class imagen:
+    <<generate.imagen>>
 #+end_src
 
 ***** REFACTOR Generate Image
 #+begin_src python
-#+end_src
-
-
-**** REFACTOR character
-#+begin_src python
-class character:
-<<get_histories.character>>
-<<get_avatar.character>>
-<<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
-#+end_src
-
-
-**** REFACTOR init
-#+begin_src python
-        def __init__(
-            self, token: str,
-            ws: websockets.WebSocketClientProtocol,
-            session: Session
-        ):
-            self.token = token
-            self.session = session
-            self.ws = ws
-#+end_src
-
-
-**** REFACTOR Error handling
-
-**** REFACTOR create_image
-#+begin_src python
-        async def create_img(
+        async def generate(
             self, char: str, chat_id: str, text: str,
             author_name:str, Return_img: bool = True, Return_all: bool = False, *, turn_id: str = None, candidate_id: str = None, token:str = None
         ):
@@ -197,6 +170,36 @@ class character:
                         if Return_img:
                             r = response['turn']['candidates'][0]['tti_image_rel_path']
                             return r
+
+#+end_src
+
+
+**** REFACTOR character
+#+begin_src python
+class character:
+<<get_histories.character>>
+<<get_avatar.character>>
+<<get_information.character>> ## contains description, author, etc. needs to be defined, gets called in the example. Dictionary file
+#+end_src
+
+
+**** REFACTOR init
+#+begin_src python
+        def __init__(
+            self, token: str,
+            ws: websockets.WebSocketClientProtocol,
+            session: Session
+        ):
+            self.token = token
+            self.session = session
+            self.ws = ws
+#+end_src
+
+
+**** REFACTOR Error handling
+
+**** REFACTOR create_image
+#+begin_src python
 
 #+end_src
 **** REFACTOR send_message
