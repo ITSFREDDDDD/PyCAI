@@ -41,9 +41,15 @@ With that being said, we implement coincident features that add value to interac
 #+end_example
 ** REFACTOR PySynCAI
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
-
 #+begin_src python
 class PySynCAI:
+  <<constructor.PySynCAI>>
+  <<chat.PySyncAI>>
+  <<
+#+end_src
+*** REFACTOR constructor
+#+name:constructor.PySynCAI
+#+begin_src python
   def __init__(
     self, token: str = None, plus: bool = False
   ):
@@ -81,20 +87,19 @@ class PySynCAI:
                raise AuthError('Invalid token')
                yield PyAsyncCAI2.chat2(key, self.ws, self.session)
         finally:
-          5await self.ws.close()
-<<chat.PySyncAI>>
-<<chat.
+          await self.ws.close()
 #+end_src
 *** chat
 
 #+note: these noweb blocks should just be tangled based on section headline level
+#+name: chat.PySynCAI
 #+BEGIN_SRC python :tangle "sample.py" :noweb yes
-  class chat:
-
-      <<get_history.chat>> # Gets a specific history from histories json object or from the chat object
-      <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter. Not yet defined
-      <<create.chat>> #creates a new chat. might only be in v1
-      <<get.chat>> # pulls the chat
+class chat:
+  # was there a constructor here?
+  <<get_history.chat>> # Gets a specific history from histories json object or from the chat object
+  <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter. Not yet defined
+  <<create.chat>> #creates a new chat. might only be in v1
+  <<get.chat>> # pulls the chat
 #+END_SRC
 
 
