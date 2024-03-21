@@ -105,7 +105,7 @@ The name chat should be refactored to "message".
 
       <<get_history.chat>> # Gets a specific history from histories json object
       <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter. Not yet defined
-      <<create.chat>> #creates a new chat
+      <<create.chat>> #creates a new chat. might only be in v1
 #+END_SRC
 
 *** REFACTOR message
@@ -115,7 +115,7 @@ The name chat should be refactored to "message".
      <<send.message>> # these are indented
      <<delete.message>> # these are indented
      <<next.message>> #R# default gets the next message in sequence, if defined takes number parameter 
-
+     <<rate.message>> # Assigns message value
 #+end_src
 *** REFACTOR
 
