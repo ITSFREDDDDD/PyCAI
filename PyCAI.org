@@ -76,7 +76,7 @@ class PostTypeError(PyCAI2EX):
 
 #+end_src
 
-* Core functions
+* Logic
 #+begin_example python
 # This is a integration test
 #       Managing a chat with a character
@@ -122,8 +122,6 @@ async def get_history(self, char: str, *, token: str = None):
   return output
 
 #+end_src
-
-
 
 *** REFACTOR message
 #+begin_src python
