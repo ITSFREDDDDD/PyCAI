@@ -39,6 +39,8 @@ With that being said, we implement coincident features that add value to interac
         message.delete('CHAT_ID', 'TURN_ID')
 
 #+end_example
+
+#+note: PySyncAI seems unnecessary... should have all classes pushed back and remove that name, just put it here
 ** REFACTOR Setup
 #+begin_src python
 from contextlib import asynccontextmanager
@@ -92,7 +94,7 @@ class PostTypeError(PyCAI2EX):
 
 #+end_src
 
-** REFACTOR PySynCAI
+** REFACTOR Master Class
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
 #+begin_src python
 class PySynCAI:
@@ -412,7 +414,6 @@ Gets chat histories
 #+note: stuff like search should be in a different repo ** Search
 
 #+note:
-
 
 ** Abstract functions
 Functions that aren't the core logic of the library but called in methods
