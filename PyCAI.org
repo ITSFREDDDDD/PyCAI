@@ -137,6 +137,7 @@ class message:
   <<delete.message>> # these are indented
   <<next.message>> #R# default gets the next message in sequence, if defined takes number parameter 
   <<rate.message>> # Assigns message value
+  <<translate.message>> # needs to be in another program, not cai specific
 #+end_src
 **** REFACTOR send
 the name send_message should be renamed to "create"
@@ -203,6 +204,57 @@ the name send_message should be renamed to "create"
                             
 
 #+end_src
+
+
+**** REFACTOR delete
+the name delete_message should be renamed to "delete"
+name: delete.message
+#+begin_src python
+# where did the code go?
+#+end_src
+**** [#B] translate
+This function should be moved into a different repository such as chat_manager, since it isn't necessary for CAI.
+#+name: translate.mesage
+#+begin_src python
+        async def transl(text:str, target:str, source:str):
+            translator = esgt(
+            source_language=source,
+            target_language=target)
+
+            resoult = translator.translate(text)
+
+            return result
+
+#+end_src
+**** next
+#+name: next.message
+#+begin_src python :c-pyasynccai2-chat:
+        async def next_message(
+            self, char: str, parent_msg_uuid: str,token:str = None
+        ):
+            setup = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
+            chat_id = setup['chats'][0]['chat_id']
+            await self.ws.send(json.dumps({
+                'command': 'generate_turn_candidate',
+                'payload': {
+                    'character_id': char,
+                    'turn_key': {
+                        'turn_id': parent_msg_uuid,
+                        'chat_id': chat_id
+                    }
+                }
+            }))
+            
+            while True:
+                response = json.loads(await self.ws.recv())
+                try: response['turn']
+                except: raise ServerError(response['comment'])
+
+                if not response['turn']['author']['author_id'].isdigit():
+                    try: is_final = response['turn']['candidates'][0]['is_final']
+                    except: pass
+                    else: return response
+            #+end_src
 
 
 
@@ -303,55 +355,6 @@ Gets chat histories
 #+end_src
 
 *** REFACTOR Error handling
-
-
-*** REFACTOR delete_message
-the name delete_message should be renamed to "delete"
-#+begin_src python
-
-#+end_src
-*** Translate
-This function should be moved into a different repository such as chat_manager, since it isn't necessary for CAI.
-#+begin_src python
-        async def transl(text:str, target:str, source:str):
-            translator = esgt(
-            source_language=source,
-            target_language=target)
-
-            resoult = translator.translate(text)
-
-            return result
-
-#+end_src
-*** next_message
-**** REFACTOR-IMPLEMENTABLE next-message
-#+begin_src python :c-pyasynccai2-chat:
-        async def next_message(
-            self, char: str, parent_msg_uuid: str,token:str = None
-        ):
-            setup = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
-            chat_id = setup['chats'][0]['chat_id']
-            await self.ws.send(json.dumps({
-                'command': 'generate_turn_candidate',
-                'payload': {
-                    'character_id': char,
-                    'turn_key': {
-                        'turn_id': parent_msg_uuid,
-                        'chat_id': chat_id
-                    }
-                }
-            }))
-            
-            while True:
-                response = json.loads(await self.ws.recv())
-                try: response['turn']
-                except: raise ServerError(response['comment'])
-
-                if not response['turn']['author']['author_id'].isdigit():
-                    try: is_final = response['turn']['candidates'][0]['is_final']
-                    except: pass
-                    else: return response
-            #+end_src
 
 
 
