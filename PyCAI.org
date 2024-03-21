@@ -102,7 +102,7 @@ class PySynCAI:
   <<chat.PySyncAI>>
   <<message.PySyncAI>>
   <<imagen.PySyncAI>>
-  <<>>
+  <<character.PySyncAI>>
 #+end_src
 *** REFACTOR constructor
 #+name:constructor.PySynCAI
