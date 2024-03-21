@@ -47,6 +47,7 @@ class PySynCAI:
   <<chat.PySyncAI>>
   <<message.PySyncAI>>
   <<imagen.PySyncAI>>
+  <<>>
 #+end_src
 *** REFACTOR constructor
 #+name:constructor.PySynCAI
@@ -135,24 +136,24 @@ class imagen:
 
 ***** REFACTOR Generate Image
 #+begin_src python
-        async def generate(
-            self, char: str, chat_id: str, text: str,
-            author_name:str, Return_img: bool = True, Return_all: bool = False, *, turn_id: str = None, candidate_id: str = None, token:str = None
+async def generate(
+  self, char: str, chat_id: str, text: str,
+  author_name:str, Return_img: bool = True, Return_all: bool = False, *, turn_id: str = None, candidate_id: str = None, token:str = None
         ):
-            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
-            chat_id = json_out['chats'][0]['chat_id']
-            creator_id = json_out['chats'][0]['creator_id']
+  json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
+  chat_id = json_out['chats'][0]['chat_id']
+  creator_id = json_out['chats'][0]['creator_id']
 
-            if turn_id != None and candidate_id != None:
-                message['update_primary_candidate'] = {
-                    'candidate_id': candidate_id,
+  if turn_id != None and candidate_id != None:
+    message['update_primary_candidate'] = {
+    'candidate_id': candidate_id,
                     'turn_key': {
-                        'turn_id': turn_id,
-                        'chat_id': chat_id
+                    'turn_id': turn_id,
+                    'chat_id': chat_id
                     }
                 }
-
-            message = {
+                
+                message = {
                 'command': 'create_and_generate_turn',
                 'payload': {
                     'character_id': char,
