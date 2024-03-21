@@ -153,6 +153,7 @@ class PySynCAI:
 #+BEGIN_SRC python :tangle no :noweb yes
 class chat:
   # was there a constructor here?
+  <<constructor.chat>>
   <<get_history.chat>> # Gets a specific history from histories json object or from the chat object
   <<next.chat>> #default gets the next chat in sequence, if defined takes number parameter. Not yet defined
   <<create.chat>> #creates a new chat. might only be in v1
@@ -171,6 +172,7 @@ async def get_history(self, char: str, *, token: str = None):
 
 #+end_src
 *** REFACTOR constructor
+#+name:constructor.chat
 #+begin_src python :tangle no :noweb yes
 
 # I'm pretty sure this was the chat constructor but should double check. This constructor likely needs to be present in the new classes I created.
@@ -322,6 +324,7 @@ class imagen:
   <<generate.imagen>>
 #+end_src
 ***** REFACTOR Generate Image
+#+name:generate.imagen
 #+begin_src python :tangle no :noweb yes
 async def generate(
   self, char: str, chat_id: str, text: str,
