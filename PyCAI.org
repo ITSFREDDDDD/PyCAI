@@ -46,6 +46,7 @@ class PySynCAI:
   <<constructor.PySynCAI>>
   <<chat.PySyncAI>>
   <<message.PySyncAI>>
+  <<imagen.PySyncAI>>
 #+end_src
 *** REFACTOR constructor
 #+name:constructor.PySynCAI
@@ -126,9 +127,10 @@ class message:
 #+end_src
 *** REFACTOR imagen
 imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
+#+name:imagen.PySyncAI
 #+begin_src python
-  class imagen:
-    <<generate.imagen>>
+class imagen:
+  <<generate.imagen>>
 #+end_src
 
 ***** REFACTOR Generate Image
