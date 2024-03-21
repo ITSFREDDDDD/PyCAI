@@ -103,14 +103,24 @@ The name chat should be refactored to "message".
       <<send.message>> # these are indented
       <<delete.message>> # these are indented
       <<next.message>> #R# Needs 
-      <<imagen.message>> #R# Needs generate.image class
+      <<create_image.message>> #R# Needs generate.image class
       <<get_histories.message>> #R# Needs character class
       <<get_history.chat>> #R# chat class
       <<get_avatar.message>> #R# Needs character class
 #+END_SRC
 
 **** image
+#+begin_src python
+class image:
+<<generate.image>>
+#+end_src
 
+***** REFACTOR Generate Image
+#+begin_src python
+#+end_src
+
+
+**** REFACTOR character
 #+begin_src python
 class character:
 <<get_histories.character>>
