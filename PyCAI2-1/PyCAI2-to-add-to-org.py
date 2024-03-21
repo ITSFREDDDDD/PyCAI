@@ -9,11 +9,14 @@ from pydub import AudioSegment
 from io import BytesIO
 from easygoogletranslate import EasyGoogleTranslate as esgt
 
-# ______         ______ _______ _______ ______
-# |   __ \ __ __ |      |   _   |_     _|__    |
-# |    __/|  |  ||   ---|       |_|   |_|    __|
-# |___|   |___  ||______|___|___|_______|______|
-#         |_____|
+#███████             ██████      ██     ██  ████
+#░██░░░░██  ██   ██  ██░░░░██    ████   ░██ █░░░ █
+#░██   ░██ ░░██ ██  ██    ░░    ██░░██  ░██░    ░█
+#░███████   ░░███  ░██         ██  ░░██ ░██   ███
+#░██░░░░     ░██   ░██        ██████████░██  █░░
+#░██         ██    ░░██    ██░██░░░░░░██░██ █
+#░██        ██      ░░██████ ░██     ░██░██░██████
+#░░        ░░        ░░░░░░  ░░      ░░ ░░ ░░░░░░
 # BUILD BY @Falco_TK    (https://github.com/FalcoTK)
 # CODE  BY @kramcat     (https://github.com/kramcat)
 # CODE  BY @background  (https://github.com/backaround)
@@ -89,161 +92,7 @@ class PyAsyncCAI2:
         finally:
             await self.ws.close()
 
-    class chat:
-        def __init__(
-            self, token: str, session: Session
-        ):
-            self.token = token
-            self.session = session
-
-        async def voice(
-            self, char: str, room_id: str,
-            text: str, voice_pth:str, *, token: str = None,
-            **kwargs
-        ):
-            response = await PyAsyncCAI2.request(
-                'chat/streaming/', self.session,
-                token=token, method='POST', split2='True',
-                data={
-                    "character_external_id": char,
-                    "enable_tti": None,
-                    "filter_candidates": None,
-                    "give_room_introductions": True,
-                    "history_external_id": room_id,
-                    "image_description": "",
-                    "image_description_type": "",
-                    "image_origin_type": "",
-                    "image_rel_path": "",
-                    "initial_timeout": None,
-                    "insert_beginning": None,
-                    "is_proactive": False,
-                    "mock_response": False,
-                    "model_properties_version_keys": "",
-                    "model_server_address": None,
-                    "model_server_address_exp_chars": None,
-                    "num_candidates": 1,
-                    "override_prefix": None,
-                    "override_rank": None,
-                    "parent_msg_uuid": None,
-                    "prefix_limit": None,
-                    "prefix_token_limit": None,
-                    "rank_candidates": None,
-                    "ranking_method": "random",
-                    "retry_last_user_msg_uuid": None,
-                    "rooms_prefix_method": "",
-                    "seen_msg_uuids": [],
-                    "staging": False,
-                    "stream_every_n_steps": 16,
-                    "stream_params": None,
-                    "text": text,
-                    "tgt": None,
-                    "traffic_source": None,
-                    "unsanitized_characters": None,
-                    "voice_enabled": True,
-                    **kwargs
-                }
-            )
-
-            merged_audio = AudioSegment.silent(duration=0)
-            for i, json_parsed in enumerate(response):
-                replies = json_parsed.get("replies", [])
-
-                for reply in replies:
-                    text = reply.get("text", "")
-
-                encode = json_parsed.get("speech", "")
-                if encode:
-                    decode = base64.b64decode(encode)
-                    audio = AudioSegment.from_file(BytesIO(decode))
-                    merged_audio += audio
-                else:
-                    print(f"Skipping .json #{i}") # Intentionally skips due to how c.ai api works
-
-            # Exporting the merged audio to voice.mp3
-            merged_audio.export("voice.mp3", format="mp3")
-            voice_path = os.path.abspath('voice.mp3')
-            shutil.move(voice_path, os.path.join(voice_pth, os.path.basename(voice_path)))
-
-            return text 
-
-        async def next_message(
-            self, history_id: str, parent_msg_uuid: str,
-            tgt: str, *, token: str = None, **kwargs
-        ):
-            response = await PyAsyncCAI2.request(
-                'chat/streaming/', self.session,
-                token=token, method='POST', split=True,
-                data={
-                    'history_external_id': history_id,
-                    'parent_msg_uuid': parent_msg_uuid,
-                    'tgt': tgt,
-                    **kwargs
-                }
-            )
-
-        async def get_histories(
-            self, char: str, *, number: int = 50,
-            token: str = None
-        ):
-            return await PyAsyncCAI2.request(
-                'chat/character/histories_v2/', self.session,
-                token=token, method='POST',
-                data={'external_id': char, 'number': number},
-            )
-
-        async def send_message(
-            self, char: str, text: str,
-            *, token: str = None, **kwargs
-        ):
-            r = await PyAsyncCAI2.request('chat/history/continue/', self.session,token=token, method='POST',data={'character_external_id': char})
-            external = r['external_id']
-            participants = r['participants']
-            if not participants[0]['is_human']:
-                tgt = participants[0]['user']['username']
-            else:
-                tgt = participants[1]['user']['username']
-
-            r = await PyAsyncCAI2.request(
-                'chat/streaming/', self.session,
-                token=token, method='POST', split=True,
-                data={
-                    'history_external_id': external,
-                    'tgt': tgt,
-                    'text': text,
-                    **kwargs
-                }
-            )
-            print(r)
-            response = r['replies'][0]['text']
-            return response
-        
-
-        async def delete_message(
-            self, history_id: str, uuids_to_delete: list,
-            *, token: str = None, **kwargs
-        ):
-            return await PyAsyncCAI2.request(
-                'chat/history/msgs/delete/', self.session,
-                token=token, method='POST',
-                data={
-                    'history_id': history_id,
-                    'uuids_to_delete': uuids_to_delete,
-                    **kwargs
-                }
-            )
-
-        async def new_chat(
-            self, char: str, *, token: str = None
-        ):
-            return await PyAsyncCAI2.request(
-                'chat/history/create/', self.session,
-                token=token, method='POST',
-                data={
-                    'character_external_id': char
-                }
-            )
-
-    class chat2:
+            class chat:
         """Managing a chat2 with a character
 
         chat.next_message('CHAR', 'CHAT_ID', 'PARENT_ID')

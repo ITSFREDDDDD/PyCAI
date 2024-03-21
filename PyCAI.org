@@ -18,9 +18,10 @@ With that being said, we implement coincident features that add value to interac
 * Core functions
 ** Search
 Finds a list of characters
-** chat
+** REFACTOR PySyncAI
+*** chat
 Currently the following sources are within the chat class. However, I think they should be refactored to go into a message class to make the code more of an interface and less of an abstract class (programming to an interface).
-*** REFACTOR-IMPLEMENTABLE next-message
+**** REFACTOR-IMPLEMENTABLE next-message
 #+begin_src python :c-pyasynccai2-chat:
         async def next_message(
             self, history_id: str, parent_msg_uuid: str,
