@@ -414,11 +414,13 @@ Gets chat histories
 #+note:
 
 
-* Abstract functions
+** Abstract functions
 Functions that aren't the core logic of the library but called in methods
-** Print
+*** Print
 Prints JSON, jq is current implementation
-** REFACTOR-CASESWITCH REFACTOR-REGEX Request :c-PyAsyncCAI2:
+*** REFACTOR-CASESWITCH REFACTOR-REGEX Request
+handles request
+:c-PyAsyncCAI2:
 #+begin_src python
     async def request(
         url: str, session: Session,
@@ -475,9 +477,3 @@ Prints JSON, jq is current implementation
         else:
             return data
 #+end_src
-** REFACTOR 
-
-** Pulls an image
-** Delete message
-
-
