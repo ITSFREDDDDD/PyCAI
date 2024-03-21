@@ -45,7 +45,7 @@ PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be 
 class PySynCAI:
   <<constructor.PySynCAI>>
   <<chat.PySyncAI>>
-  <<
+  <<message.PySyncAI>>
 #+end_src
 *** REFACTOR constructor
 #+name:constructor.PySynCAI
@@ -101,8 +101,6 @@ class chat:
   <<create.chat>> #creates a new chat. might only be in v1
   <<get.chat>> # pulls the chat
 #+END_SRC
-
-
 **** get_history
 #+name:get_history.chat
 #+begin_src python
@@ -117,13 +115,14 @@ async def get_history(self, char: str, *, token: str = None):
 #+end_src
 
 *** REFACTOR message
+#+name:message.PySyncAI
 #+begin_src python
-  class message:
-     <<init.message>> # these are indented
-     <<send.message>> # these are indented
-     <<delete.message>> # these are indented
-     <<next.message>> #R# default gets the next message in sequence, if defined takes number parameter 
-     <<rate.message>> # Assigns message value
+class message:
+  <<init.message>> # these are indented
+  <<send.message>> # these are indented
+  <<delete.message>> # these are indented
+  <<next.message>> #R# default gets the next message in sequence, if defined takes number parameter 
+  <<rate.message>> # Assigns message value
 #+end_src
 *** REFACTOR imagen
 imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
