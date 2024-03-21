@@ -176,14 +176,14 @@ async def get_history(self, char: str, *, token: str = None):
 #+begin_src python :tangle no :noweb yes
 
 # I'm pretty sure this was the chat constructor but should double check. This constructor likely needs to be present in the new classes I created.
-        def __init__(
-            self, token: str,
-            ws: websockets.WebSocketClientProtocol,
-            session: Session
-        ):
-            self.token = token
-            self.session = session
-            self.ws = ws
+def __init__(
+  self, token: str,
+  ws: websockets.WebSocketClientProtocol,
+  session: Session
+  ):
+  self.token = token
+  self.session = session
+  self.ws = ws
 #+end_src
 *** REFACTOR message
 #+name:message.PySyncAI
