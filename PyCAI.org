@@ -99,15 +99,19 @@ The name chat should be refactored to "message".
 #+note: these noweb blocks should just be tangled based on section headline level
 #+BEGIN_SRC python :tangle "sample.py" :noweb yes
   class chat:
-      <<init.message>> # these are indented
-      <<send.message>> # these are indented
-      <<delete.message>> # these are indented
-      <<next.message>> #R# Needs 
-      <<get_histories.message>> #R# Needs character class
+ character class
       <<get_history.chat>> #R# chat class
       <<get_avatar.message>> #R# Needs character class
 #+END_SRC
 
+*** REFACTOR message
+#+begin_src python
+      <<init.message>> # these are indented
+      <<send.message>> # these are indented
+      <<delete.message>> # these are indented
+      <<next.message>> #R# Needs 
+      <<get_histories.message>> #R# Needs
+#+end_src
 *** REFACTOR
 
 **** imagen
