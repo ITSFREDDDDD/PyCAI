@@ -18,6 +18,9 @@ The PyCAI2 library is intended to fit a specific purpose. Interacting with chara
 With that being said, we implement coincident features that add value to interacting with character.ai in a way that cannot be encapsulated in this library alone. These kinds of programs can be found in our organization's group repository. For example, see /card manager/, which implements card management and makes calls to any arbitrary character card endpoint through an adapter. Additionally, _the namespaces used in this code are consistent with the namespaces used in our additional projects (so you can expect the image class to be present and have similar methods such as generate and delete as it has here)_
 
 #+note: tags like c-PyAsyncCAI2 represents the class the method belongs to. In this case PyAsyncCAI2
+
+* Coding Requests
+** Program to an interface (verbs), not abstract classes (nouns)
 * Setup
 #+begin_src python
 from contextlib import asynccontextmanager
@@ -92,12 +95,6 @@ Finds a list of characters
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
 
 *** chat
-
-        
-
-Currently the following sources are within the chat class. However, I think they should be refactored to go into a message class to make the code more of an interface and less of an abstract class (programming to an interface).
-
-The name chat should be refactored to "message".
 
 #+note: these noweb blocks should just be tangled based on section headline level
 #+BEGIN_SRC python :tangle "sample.py" :noweb yes
