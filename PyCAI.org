@@ -24,7 +24,6 @@ With that being said, we implement coincident features that add value to interac
 - Good: message.send
 - Bad:  chat.new
 
-
 * Logic
 #+begin_example python
 # This is a integration test
@@ -40,8 +39,6 @@ With that being said, we implement coincident features that add value to interac
         message.delete('CHAT_ID', 'TURN_ID')
 
 #+end_example
-** Search
-Finds a list of characters
 ** REFACTOR PySynCAI
 PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be necessary. There should be message class, so import should take the form "import message from PyCAI"
 #+begin_src python
@@ -85,12 +82,9 @@ class PySynCAI:
                yield PyAsyncCAI2.chat2(key, self.ws, self.session)
         finally:
           await self.ws.close()
-#+end_src
-*** Constructor
-#+name:constructor.PySyncAI
-#+begin_src python
-#+end_src
+<<chat.PySyncAI>>
 
+#+end_src
 *** chat
 
 #+note: these noweb blocks should just be tangled based on section headline level
@@ -126,9 +120,7 @@ async def get_history(self, char: str, *, token: str = None):
      <<next.message>> #R# default gets the next message in sequence, if defined takes number parameter 
      <<rate.message>> # Assigns message value
 #+end_src
-*** REFACTOR
-
-**** imagen
+*** REFACTOR imagen
 imagen is called imagen ("imagine - image generate") to keep stuff as interfaces (verbs) and not abstract classes (nouns)
 #+begin_src python
   class imagen:
@@ -357,7 +349,8 @@ This should probably be placed in a character class, not a message class
             full_link = f"https://characterai.io/i/80/static/avatars/{avatar_url}"
             return full_link
 #+end_src
-
+** Search
+Finds a list of characters
 ** Setup
 #+begin_src python
 from contextlib import asynccontextmanager
@@ -409,7 +402,6 @@ class PostTypeError(PyCAI2EX):
     pass
 
 #+end_src
-
 
 
 * Abstract functions
