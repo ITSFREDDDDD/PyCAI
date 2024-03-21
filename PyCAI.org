@@ -21,6 +21,9 @@ With that being said, we implement coincident features that add value to interac
 
 * Coding Requests
 ** Program to an interface (verbs), not abstract classes (nouns)
+- Good: message.send
+- Bad:  chat.new
+
 * Setup
 #+begin_src python
 from contextlib import asynccontextmanager
@@ -80,7 +83,7 @@ class PostTypeError(PyCAI2EX):
         message.next('CHAR', 'CHAT_ID', 'PARENT_ID')
         message.send('CHAR', 'CHAT_ID', 'TEXT', {AUTHOR})
         message.next('CHAR', 'MESSAGE')
-        chat.new('CHAR', 'CHAT_ID', 'CREATOR_ID') #may have made a mistake here, it looks like there's a new chat function separate from new message, and I'm not sure if I handled that correctly
+        chat.create('CHAR', 'CHAT_ID', 'CREATOR_ID') #may have made a mistake here, it looks like there's a new chat function separate from new message, and I'm not sure if I handled that correctly
         character.get_histories('CHAR') #returns chat IDs?
         chat.get('CHAR')
         chat.get_history('CHAT_ID')
