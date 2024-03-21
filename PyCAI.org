@@ -21,7 +21,9 @@ Finds a list of characters
 ** REFACTOR PySyncAI
 *** chat
 Currently the following sources are within the chat class. However, I think they should be refactored to go into a message class to make the code more of an interface and less of an abstract class (programming to an interface).
-**** REFACTOR-IMPLEMENTABLE next-message
+
+**** Next Message
+***** REFACTOR-IMPLEMENTABLE next-message
 #+begin_src python :c-pyasynccai2-chat:
         async def next_message(
             self, history_id: str, parent_msg_uuid: str,
@@ -38,8 +40,80 @@ Currently the following sources are within the chat class. However, I think they
                 }
             )
             #+end_src
+
+**** Get Histories
+***** Get histories
+Get the histories of the character
+#+begin_src python :c-pyasynccai2-chat:
+
+#+end_src
+**** Delete Message
+Delete the message in the current chat, uuids ... 
+#+begin_src python
+
+        async def delete_message(
+            self, history_id: str, uuids_to_delete: list,
+            *, token: str = None, **kwargs
+        ):
+            return await PyAsyncCAI2.request(
+                'chat/history/msgs/delete/', self.session,
+                token=token, method='POST',
+                data={
+                    'history_id': history_id,
+                    'uuids_to_delete': uuids_to_delete,
+                    **kwargs
+                }
+            )
+#+end_src
+**** New Chat
+#+begin_src python
+        async def new_chat(
+            self, char: str, *, with_greeting: bool = True, token:str =None
+        ):
+            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
+            chat_id = json_out['chats'][0]['chat_id']
+            creator_id = json_out['chats'][0]['creator_id']
+
+            message = {
+                'command': 'create_chat',
+                'payload': {
+                    'chat': {
+                        'chat_id': chat_id,
+                        'creator_id': creator_id,
+                        'visibility': 'VISIBILITY_PRIVATE',
+                        'character_id': char,
+                        'type': 'TYPE_ONE_ON_ONE'
+                    },
+                    'with_greeting': with_greeting
+                }
+            }
+            await self.ws.send(json.dumps(message))
+
+            response = json.loads(await self.ws.recv())
+            print(response)
+
+            try: response['chat']
+            except KeyError:
+                raise ServerError(response['comment'])
+            else:
+                answer = json.loads(await self.ws.recv())
+                return response, answer
+
+#+end_src
+
 ** Get_histories
 Gets chat history
+#+begin_src python
+        async def get_histories(
+            self, char: str, *, number: int = 50,
+            token: str = None
+        ):
+            return await PyAsyncCAI2.request(
+                'chat/character/histories_v2/', self.session,
+                token=token, method='POST',
+                data={'external_id': char, 'number': number},
+            )
+#+end_src
 
 ** get_histories 
 ** Abstract functions
