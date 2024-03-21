@@ -21,7 +21,7 @@ With that being said, we implement coincident features that add value to interac
 
 * Coding Requests
 ** Program to an interface (verbs), not abstract classes (nouns)
-- Good: message.create
+- Good: message.send
 - Bad:  chat.new
 
 * Setup
