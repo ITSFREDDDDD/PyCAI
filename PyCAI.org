@@ -79,7 +79,7 @@ class PostTypeError(PyCAI2EX):
 * Core functions
 #+begin_example python
 # This is a integration test
-#       Managing a chat2 with a character
+#       Managing a chat with a character
         message.next('CHAR', 'CHAT_ID', 'PARENT_ID')
         message.send('CHAR', 'CHAT_ID', 'TEXT', {AUTHOR})
         message.next('CHAR', 'MESSAGE')
@@ -108,6 +108,22 @@ PyAsyncCAI2 should just be renamed to PyCAI2. Actually, this should not even be 
       <<create.chat>> #creates a new chat. might only be in v1
       <<get.chat>> # pulls the chat
 #+END_SRC
+
+
+**** get_history
+#+name:get_history.chat
+#+begin_src python
+async def get_history(self, char: str, *, token: str = None):
+  json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
+  chat_id = json_out['chats'][0]['chat_id']
+  r = await PyAsyncCAI2.request(f'turns/{chat_id}/', self.session, token=token, neo=True)
+  turn_out = [{"turn_id": turn['turn_key']['turn_id'], "raw_content": turn['candidates'][0]['raw_content']} for turn in r['turns']]
+  output = [f'["{turn["turn_id"]}", "{turn["raw_content"]}"]' for turn in turn_out]
+  return output
+
+#+end_src
+
+
 
 *** REFACTOR message
 #+begin_src python
@@ -336,18 +352,6 @@ Gets chat histories
                 f'&num_preview_turns={preview}',
                 self.session, token=token, neo=True
             )
-
-#+end_src
-
-**** get_history
-#+begin_src python
-        async def get_history(self, char: str, *, token: str = None):
-            json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session, token=token, method='GET', neo=True)
-            chat_id = json_out['chats'][0]['chat_id']
-            r = await PyAsyncCAI2.request(f'turns/{chat_id}/', self.session, token=token, neo=True)
-            turn_out = [{"turn_id": turn['turn_key']['turn_id'], "raw_content": turn['candidates'][0]['raw_content']} for turn in r['turns']]
-            output = [f'["{turn["turn_id"]}", "{turn["raw_content"]}"]' for turn in turn_out]
-            return output
 
 #+end_src
 
