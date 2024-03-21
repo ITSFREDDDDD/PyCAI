@@ -25,7 +25,7 @@ With that being said, we implement coincident features that add value to interac
 - Bad:  chat.new
 
 * Logic
-#+begin_example python :tangle no :noweb yes
+#+begin_example python :tangle ./tests/chat-management-it :noweb yes
 # This is a integration test
 #       Managing a chat with a character
         message.next('CHAR', 'CHAT_ID', 'PARENT_ID')
