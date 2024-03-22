@@ -131,21 +131,21 @@ def __init__(
   @asynccontextmanager
   async def connect(self, token: str = None):
     try:
-      if # TODO: oken == None: key = self.token
-        else: key = token
-          setattr(self.session, 'token', key)
-         try:
-           self.ws = await websockets.connect(
-               'wss://neo.character.ai/ws/',
-                  extra_headers = {
-                    'Cookie': f'HTTP_AUTHORIZATION="Token {key}"',
-                 }
-             )
-         except websockets.exceptions.InvalidStatusCode:
-             raise AuthError('Invalid token')
-         yield PyAsyncCAI2.chat2(key, self.ws, self.session)
-        finally:
-          await self.ws.close()
+      if token == None: key = self.token
+      else: key = token
+      setattr(self.session, 'token', key)
+      try:
+        self.ws = await websockets.connect(
+          'wss://neo.character.ai/ws/',
+          extra_headers = {
+            'Cookie': f'HTTP_AUTHORIZATION="Token {key}"',
+          }
+        )
+      except websockets.exceptions.InvalidStatusCode:
+        raise AuthError('Invalid token')
+      yield PyAsyncCAI2.chat2(key, self.ws, self.selfsession)
+    finally:
+      await self.ws.close()
 #+end_src
 *** chat
 
@@ -173,6 +173,7 @@ async def get_history(self, char: str, *, token: str = None):
 
 #+end_src
 *** REFACTOR constructor
+
 #+name:constructor.chat
 #+begin_src python :tangle no :noweb yes
 
@@ -203,25 +204,20 @@ the name send_message should be renamed to "create"
 #+begin_src python :tangle no :noweb yes
 async def send_message(
                         self, char: str,
-                        text: str, author_name:self
-                        tr,
+                        text: str, author_name:str,
                         ,*, turn_id: str = None,token:str = None,
-                        candidate_id: str = None, Return_name: bool = False):
+                        candidate_id: str = None, Return_name: bool = False
+):
+
             json_out = await PyAsyncCAI2.request(f'chats/recent/{char}', self.session,token=token,method='GET',neo=True)
             chat_id = json_out['chats'][0]['chat_id']
             creator_id = json_out['chats'][0]['creator_id']
-
             message = {
                         'command': 'create_and_generate_turn',
                         'payload': {
                                     'character_id': char,
                                     'turn': {
-                        'turn_key': {'chat_def __init__(self):
-                        """
-                        
-                        """
-                     
-                        ': chat_id},
+                                                'turn_key': {'chat_id': chat_id},
                                                 "author": {
                                                             "author_id": creator_id,
                                                             "is_human": True,
@@ -230,7 +226,7 @@ async def send_message(
                                     }
                         }
             }
-            
+
             if turn_id != None and candidate_id != None:
                         message['update_primary_candidate'] = {
                                     'candidate_id': candidate_id,
