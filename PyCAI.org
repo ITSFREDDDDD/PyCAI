@@ -105,7 +105,7 @@ class PySynCAI:
   <<imagen.PySyncAI>>
   <<character.PySyncAI>>
 #+end_src
-*** REFACTOR constructor
+*** REFACTOR-ADDTOCLASS constructor
 #+name:constructor.PySynCAI
 #+begin_src python :tangle no :noweb yes
   def __init__(
